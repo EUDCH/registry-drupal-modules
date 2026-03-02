@@ -8,6 +8,10 @@
 
 #     [confirmation_url]
 
+#     If you have any questions or need further assistance, please contact us at registry@edch.eu.
+
+#    — The EDCH Registry team
+
 #   from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 2. Notify Admins - User Confirmed Org Email
@@ -71,7 +75,7 @@ ownership_request:
 
     [approve_ownership_link]
 
-    If you do not accept the request, please inform the administrators by replying to this email. 
+    If you do not accept the request, please contact us at registry@edch.eu.
 
     — The EDCH Registry team
 
@@ -89,6 +93,8 @@ ownership_approved:
 
     [edit_organisation_link]
 
+    If you have any questions or need further assistance, please contact us at registry@edch.eu.
+
     — The EDCH Registry team
 
   from: "EDCH Registry <registry@edch.eu>"
@@ -105,25 +111,24 @@ ownership_approved_notification_to_owners:
 
     [edit_organisation_link]
 
+    If you have any questions or need further assistance, please contact us at registry@edch.eu.
+
     — The EDCH Registry team
 
   from: "EDCH Registry <registry@edch.eu>"
 
 owner_notification_when_org_published:
-  subject: EDCH Registry - Your organisation’s profile is published
+  subject: Welcome to the EDCH Registry - Your organisation’s profile is published
   body: |
     Dear [full_name],
 
-    This is a notification that the the profile of the organisation below has been published on the EDCH Registry
+    Following a review against our Registry criteria, we’re pleased to let you know that your organisation’s profile is now published! You can review it here: [review_link]
 
-    **Organisation Name:** [org_name]  
-    **Country:** [org_country]  
-    **Email:** [org_email]
-    **url:** [org_url]
+    If you haven’t already, please invite your team members to join the EDCH Forum (https://forum.edch.eu) — it’s a great space to connect with peers, exchange ideas, and stay updated on community-led initiatives. We’d love to see you active there!
 
-    Click the link below to see the organisation:
-
-    [review_link]
+    For any questions or further assistance, please contact us at registry@edch.eu.
+    
+    Thank you for being part of the EDCH community!
 
     — The EDCH Registry team
 
