@@ -110,7 +110,7 @@ class OrganizationValidationController extends ControllerBase {
         } else if ($hasRequestOwnership) {
             $organisation_actions_section['content'] = [
                 '#markup' => "
-                    <p><strong>{$this->t('This organisation has already been registered by another user. They have been notified and must accept your request to manage the organisation’s profile. You will receive a notification once your request is accepted.<br><br>If you do not receive a notification within a few days, please contact the administrators at registry@diamas.org.')}</strong></p>
+                    <p><strong>{$this->t('This organisation has already been registered by another user. They have been notified and must accept your request to manage the organisation’s profile. You will receive a notification once your request is accepted.<br><br>If you do not receive a notification within a few days, please contact the administrators at registry@edch.eu.')}</strong></p>
                 ",
             ];
         } else if (!empty($matching_organisations)) {

@@ -8,7 +8,7 @@
 
 #     [confirmation_url]
 
-#   from: "EDCH Registry <register@diamas.org>"
+#   from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 2. Notify Admins - User Confirmed Org Email
 # admin_notification:
@@ -16,14 +16,14 @@
 #   body: |
 #     A new user has confirmed their organisational email and is awaiting admin review.
 
-#     **User:** [user_name]  
+#     **User:** [user_name]
 #     **Email:** [user_email]
 
 #     Click the link below to review the user:
 
 #     [review_link]
 
-#   from: "EDCH Registry <register@diamas.org>"
+#   from: "EDCH Registry <registry@edch.eu>"
 
 admin_notification:
   subject: EDCH Registry - Organisation review pending
@@ -41,7 +41,7 @@ admin_notification:
 
     — The EDCH Registry team
 
-  from: "EDCH Registry <register@diamas.org>"
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 3. Admin Verified User - Notify User
 verify_organisation:
@@ -55,7 +55,7 @@ verify_organisation:
 
     — The EDCH Registry team
 
-  from: "EDCH Registry <register@diamas.org>"
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 4. Ownership Request Sent to Organisation Owners
 ownership_request:
@@ -75,8 +75,7 @@ ownership_request:
 
     — The EDCH Registry team
 
-  from: "EDCH Registry <register@diamas.org>"
-
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 5. Ownership Approved - Notify User
 ownership_approved:
@@ -92,14 +91,14 @@ ownership_approved:
 
     — The EDCH Registry team
 
-  from: "EDCH Registry <register@diamas.org>"
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 5. Ownership Approved - Notify All owners
 ownership_approved_notification_to_owners:
   subject: EDCH Registry - Profile management request accepted
   body: |
     Dear [owner_full_name],
-    
+
     [full_name] ([newOwnerEmail]) has been informed that you have accepted their request and can now manage the profile of [organisation_name] on the EDCH Registry. 
 
     You can now manage the organisation profile using the link below:
@@ -108,13 +107,13 @@ ownership_approved_notification_to_owners:
 
     — The EDCH Registry team
 
-  from: "EDCH Registry <register@diamas.org>"
+  from: "EDCH Registry <registry@edch.eu>"
 
 owner_notification_when_org_published:
   subject: EDCH Registry - Your organisation’s profile is published
   body: |
     Dear [full_name],
-    
+
     This is a notification that the the profile of the organisation below has been published on the EDCH Registry
 
     **Organisation Name:** [org_name]  
@@ -128,4 +127,4 @@ owner_notification_when_org_published:
 
     — The EDCH Registry team
 
-  from: "EDCH Registry <register@diamas.org>"
+  from: "EDCH Registry <registry@edch.eu>"
