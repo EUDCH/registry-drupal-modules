@@ -2,6 +2,12 @@
 
 All notable changes to this repository are documented here.
 
+## [1.1.0] – Update mail templates
+
+### Changed
+
+- Improve mail templates
+
 ## [1.0.1] – Update contact points to use edch.eu
 
 ### Changed
