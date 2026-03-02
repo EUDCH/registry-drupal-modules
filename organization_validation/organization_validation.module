@@ -489,7 +489,7 @@ function organization_validation_send_email($key, $recipient = NULL, $params = [
     // ✅ Load email details
     $subject = $emails[$key]['subject'];
     $body_template = $emails[$key]['body'];
-    $from = $emails[$key]['from'] ?? 'EDCH Registry <noreply@diamas.org>'; // ✅ Default if missing
+    $from = $emails[$key]['from'] ?? 'EDCH Registry <no-reply@edch.eu>'; // ✅ Default if missing
 
     // ✅ Log placeholders before replacement
     \Drupal::logger('organization_validation')->notice("Email placeholders before replacement for [$key]: " . json_encode($params));
