@@ -35,8 +35,8 @@ admin_notification:
   body: |
     The data of the organisation below need review:
 
-    **Organisation Name:** [org_name]  
-    **Country:** [org_country]  
+    **Organisation Name:** [org_name]
+    **Country:** [org_country]
     **Email:** [org_email]
     **url:** [org_url]
 
@@ -88,7 +88,7 @@ ownership_approved:
   body: |
     Dear [full_name],
 
-    [actionOwnerFullName] ([actionOwnerEmail]) has accepted your request. You can now manage the profile of [organisation_name] on the EDCH Registry.  
+    [actionOwnerFullName] ([actionOwnerEmail]) has accepted your request. You can now manage the profile of [organisation_name] on the EDCH Registry.
 
     You can access the profile using the link below:
 
@@ -106,7 +106,7 @@ ownership_approved_notification_to_owners:
   body: |
     Dear [owner_full_name],
 
-    [full_name] ([newOwnerEmail]) has been informed that you have accepted their request and can now manage the profile of [organisation_name] on the EDCH Registry. 
+    [full_name] ([newOwnerEmail]) has been informed that you have accepted their request and can now manage the profile of [organisation_name] on the EDCH Registry.
 
     You can now manage the organisation profile using the link below:
 
