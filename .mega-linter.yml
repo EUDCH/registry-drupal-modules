@@ -1,4 +1,14 @@
 ---
+ENABLE:
+  - ACTION
+  - CSS
+  - JAVASCRIPT
+  - JSON
+  - MARKDOWN
+  - PHP
+  - REPOSITORY
+  - YAML
+
 DISABLE:
   - COPYPASTE
   - SPELL
