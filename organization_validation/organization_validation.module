@@ -15,64 +15,66 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-function organization_validation_webform_submission_access(WebformSubmissionInterface $webform_submission, $operation, AccountInterface $account) {
-    \Drupal::logger('organization_validation')->warning(
-        'organization_validation_webform_submission_access Webform submission access check: Submission ID @sid | Webform ID @webform | Operation @op | User ID @uid',
-        [
-            '@sid' => $webform_submission->id(),
-            '@webform' => $webform_submission->getWebform()->id(),
-            '@op' => $operation,
-            '@uid' => $account->id(),
-        ]
-    );
+function organization_validation_webform_submission_access(WebformSubmissionInterface $webform_submission, $operation, AccountInterface $account)
+{
+  \Drupal::logger('organization_validation')->warning(
+    'organization_validation_webform_submission_access Webform submission access check: Submission ID @sid | Webform ID @webform | Operation @op | User ID @uid',
+    [
+      '@sid' => $webform_submission->id(),
+      '@webform' => $webform_submission->getWebform()->id(),
+      '@op' => $operation,
+      '@uid' => $account->id(),
+    ],
+  );
 
-    if ($webform_submission->getWebform()->id() == 'organisation_registry') {
-        $submission_id = $webform_submission->id(); // Or any given ID
+  if ($webform_submission->getWebform()->id() == 'organisation_registry') {
+    $submission_id = $webform_submission->id(); // Or any given ID
 
-        $nids = \Drupal::entityQuery('node')
-        ->accessCheck(TRUE) // or FALSE depending on your context
-        ->condition('type', 'organisation')
-        ->condition('field_submission_id', $submission_id)
-        ->range(0, 1) // Only fetch the first match
-        ->execute();
+    $nids = \Drupal::entityQuery('node')
+    ->accessCheck(true) // or FALSE depending on your context
+    ->condition('type', 'organisation')
+    ->condition('field_submission_id', $submission_id)
+    ->range(0, 1) // Only fetch the first match
+    ->execute();
 
-        if (!empty($nids)) {
-            $nid = reset($nids); // Get the first (and only) ID
-            $organization_node = Node::load($nid);
+    if (!empty($nids)) {
+      $nid = reset($nids); // Get the first (and only) ID
+      $organization_node = Node::load($nid);
 
-            if ($organization_node) {
-                // Node exists, do your logic here
-                $organisation_owners = $organization_node->get('field_organisation_owners')->getValue();
-                $owner_ids = array_column($organisation_owners, 'target_id');
-                
-                $current_user = \Drupal::currentUser();
-                $user = User::load($current_user->id());
-                $user_id = $current_user->id();
+      if ($organization_node) {
+        // Node exists, do your logic here
+        $organisation_owners = $organization_node->get('field_organisation_owners')->getValue();
+        $owner_ids = array_column($organisation_owners, 'target_id');
 
-                if (in_array($user_id, $owner_ids) || in_array('administrator', $current_user->getRoles())) {
-                    return AccessResult::allowed();
-                }
-            } else {
-                return AccessResult::allowed();
-            }
+        $current_user = \Drupal::currentUser();
+        $user = User::load($current_user->id());
+        $user_id = $current_user->id();
+
+        if (in_array($user_id, $owner_ids) || in_array('administrator', $current_user->getRoles())) {
+          return AccessResult::allowed();
         }
-
-        return AccessResult::forbidden();
+      } else {
+        return AccessResult::allowed();
+      }
     }
 
-    return AccessResult::neutral();
+    return AccessResult::forbidden();
+  }
+
+  return AccessResult::neutral();
 }
 
-function organization_validation_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) {
-    // \Drupal::logger('organization_validation')->warning(
-    //     'organization_validation_entity_access Access check: Node ID @nid | Type @type | Operation @op | User ID @uid',
-    //     [
-    //         '@nid' => $entity->getEntityTypeId(),
-    //         '@type' => $entity->bundle(),
-    //         '@op' => $operation,
-    //         '@uid' => $account->id(),
-    //     ]
-    // );
+function organization_validation_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account)
+{
+  // \Drupal::logger('organization_validation')->warning(
+  //     'organization_validation_entity_access Access check: Node ID @nid | Type @type | Operation @op | User ID @uid',
+  //     [
+  //         '@nid' => $entity->getEntityTypeId(),
+  //         '@type' => $entity->bundle(),
+  //         '@op' => $operation,
+  //         '@uid' => $account->id(),
+  //     ]
+  // );
 }
 
 // /**
@@ -142,61 +144,63 @@ function organization_validation_entity_access(\Drupal\Core\Entity\EntityInterfa
  * Implements hook_form_alter().
  * Prefills organisation fields from URL parameters.
  */
-function organization_validation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-    if ($form_id == 'user_login_form') {
-        $form['#submit'][] = 'organization_validation_custom_login_redirect';
+function organization_validation_form_alter(&$form, FormStateInterface $form_state, $form_id)
+{
+  if ($form_id == 'user_login_form') {
+    $form['#submit'][] = 'organization_validation_custom_login_redirect';
+  }
+  // \Drupal::logger('organization_validation')->debug('FormID: @fid', ['@fid' => $form_id]);
+  // Check if we are on the 'node' add form for 'organisations'
+  if ($form_id == 'node_organisations_form') {
+
+    // ✅ Get the current request object
+    $request = \Drupal::request();
+    $query_params = $request->query->all();
+
+    // ✅ Prefill 'field_ipsp_name' if provided in URL
+    if (isset($query_params['field_ipsp_name'])) {
+      $form['field_ipsp_name']['widget'][0]['value']['#default_value'] = $query_params['field_ipsp_name'];
     }
-    // \Drupal::logger('organization_validation')->debug('FormID: @fid', ['@fid' => $form_id]);
-    // Check if we are on the 'node' add form for 'organisations'
-    if ($form_id == 'node_organisations_form') {
 
-        // ✅ Get the current request object
-        $request = \Drupal::request();
-        $query_params = $request->query->all();
-
-        // ✅ Prefill 'field_ipsp_name' if provided in URL
-        if (isset($query_params['field_ipsp_name'])) {
-            $form['field_ipsp_name']['widget'][0]['value']['#default_value'] = $query_params['field_ipsp_name'];
-        }
-
-        // ✅ Prefill additional fields if needed
-        if (isset($query_params['field_ipsp_contact_email'])) {
-            $form['field_ipsp_contact_email']['widget'][0]['value']['#default_value'] = $query_params['field_ipsp_contact_email'];
-        }
-
-        $current_user = \Drupal::currentUser();
-        $user = User::load($current_user->id());
-        $user_id = $current_user->id();
-        $node = $form_state->getFormObject()->getEntity();
-
-        if ($node instanceof Node && $node->getType() === 'organisation') {
-            // ✅ Get organisation owners
-            $existing_owners = $node->get('field_organisation_owners')->getValue();
-            $owner_ids = array_column($existing_owners, 'target_id');
-
-            // ✅ If user is not an admin & not in owners, disable the field
-            if (!$current_user->hasPermission('administer nodes') && !in_array($user_id, $owner_ids)) {
-                $form['field_organisation_owners']['#access'] = FALSE;
-            }
-
-            // if (!$user || !$user->get('field_is_verified')->value) {
-            //     \Drupal::messenger()->addError(t('You must be verified by an administrator before creating or editing an organisation.'));
-            //     $form['#access'] = FALSE;
-            // }
-        }
+    // ✅ Prefill additional fields if needed
+    if (isset($query_params['field_ipsp_contact_email'])) {
+      $form['field_ipsp_contact_email']['widget'][0]['value']['#default_value'] = $query_params['field_ipsp_contact_email'];
     }
+
+    $current_user = \Drupal::currentUser();
+    $user = User::load($current_user->id());
+    $user_id = $current_user->id();
+    $node = $form_state->getFormObject()->getEntity();
+
+    if ($node instanceof Node && $node->getType() === 'organisation') {
+      // ✅ Get organisation owners
+      $existing_owners = $node->get('field_organisation_owners')->getValue();
+      $owner_ids = array_column($existing_owners, 'target_id');
+
+      // ✅ If user is not an admin & not in owners, disable the field
+      if (!$current_user->hasPermission('administer nodes') && !in_array($user_id, $owner_ids)) {
+        $form['field_organisation_owners']['#access'] = false;
+      }
+
+      // if (!$user || !$user->get('field_is_verified')->value) {
+      //     \Drupal::messenger()->addError(t('You must be verified by an administrator before creating or editing an organisation.'));
+      //     $form['#access'] = FALSE;
+      // }
+    }
+  }
 }
 
 /**
  * Custom redirect after user login.
  */
-function organization_validation_custom_login_redirect(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
-    $redirect_url = \Drupal\Core\Url::fromRoute('organization_validation.check_organisation', [], ['absolute' => TRUE])->toString();
+function organization_validation_custom_login_redirect(&$form, \Drupal\Core\Form\FormStateInterface $form_state)
+{
+  $redirect_url = \Drupal\Core\Url::fromRoute('organization_validation.check_organisation', [], ['absolute' => true])->toString();
 
-    // ✅ Force redirect after login
-    $form_state->setRedirectUrl(\Drupal\Core\Url::fromUri($redirect_url));
+  // ✅ Force redirect after login
+  $form_state->setRedirectUrl(\Drupal\Core\Url::fromUri($redirect_url));
 
-    \Drupal::logger('organization_validation')->notice('User is being redirected to check-organisation after login.');
+  \Drupal::logger('organization_validation')->notice('User is being redirected to check-organisation after login.');
 }
 
 
@@ -205,213 +209,216 @@ function organization_validation_custom_login_redirect(&$form, \Drupal\Core\Form
  * Implements hook_entity_presave().
  * Detects when an admin verifies a user and sends a verification email.
  */
-function organization_validation_entity_presave(EntityInterface $entity) {
-    if ($entity instanceof User) {
-        // ✅ Ensure the entity has an ID before attempting to load.
-        if ($entity->isNew() || empty($entity->id())) {
-            \Drupal::logger('organization_validation')->warning('Skipping entity_presave hook because user ID is missing.');
-            return;
-        }
-
-        // Load the original user entity (before the save).
-        $original_user = User::load($entity->id());
-
-        if (!$original_user) {
-            \Drupal::logger('organization_validation')->error('Failed to load original user entity with ID: @uid', ['@uid' => $entity->id()]);
-            return;
-        }
+function organization_validation_entity_presave(EntityInterface $entity)
+{
+  if ($entity instanceof User) {
+    // ✅ Ensure the entity has an ID before attempting to load.
+    if ($entity->isNew() || empty($entity->id())) {
+      \Drupal::logger('organization_validation')->warning('Skipping entity_presave hook because user ID is missing.');
+      return;
     }
 
-    if ($entity instanceof Node && $entity->getType() === 'organisation') {
-        if ($entity->hasField('moderation_state')) {
-            // Check if Content Moderation is being used and state is draft.
-            // Get logger
-            $logger = \Drupal::logger('organisation_workflow');
+    // Load the original user entity (before the save).
+    $original_user = User::load($entity->id());
 
-            $state = $entity->get('moderation_state')->value;
-            if ($state === 'draft') {
-                $entity->setUnpublished();
-                $entity->setNewRevision(FALSE); // Don't create a new revision
-                $entity->isDefaultRevision(TRUE); // Force update of the default revision
+    if (!$original_user) {
+      \Drupal::logger('organization_validation')->error('Failed to load original user entity with ID: @uid', ['@uid' => $entity->id()]);
+      return;
+    }
+  }
 
-                $logger->notice('Organisation node @id set to unpublished because moderation state is draft.', [
-                    '@id' => $entity->id(),
-                ]);
-            }
-            elseif ($state === 'published') {
-                $entity->setPublished();
-                $entity->setNewRevision(FALSE);
-                $entity->isDefaultRevision(TRUE);
+  if ($entity instanceof Node && $entity->getType() === 'organisation') {
+    if ($entity->hasField('moderation_state')) {
+      // Check if Content Moderation is being used and state is draft.
+      // Get logger
+      $logger = \Drupal::logger('organisation_workflow');
 
-                $logger->notice('Organisation node @id set to published because moderation state is published.', [
-                    '@id' => $entity->id(),
-                ]);
-            }
-        }
+      $state = $entity->get('moderation_state')->value;
+      if ($state === 'draft') {
+        $entity->setUnpublished();
+        $entity->setNewRevision(false); // Don't create a new revision
+        $entity->isDefaultRevision(true); // Force update of the default revision
 
-        $current_user = \Drupal::currentUser();
-        $user_id = $current_user->id();
-        \Drupal::logger('organization_validation')->warning('User @uid attempted to become an owner of Organisation @nid, but the organisation has no submission ID.', [
-            '@uid' => $user_id,
-            '@nid' => $entity->id(),
+        $logger->notice('Organisation node @id set to unpublished because moderation state is draft.', [
+          '@id' => $entity->id(),
         ]);
+      } elseif ($state === 'published') {
+        $entity->setPublished();
+        $entity->setNewRevision(false);
+        $entity->isDefaultRevision(true);
 
-        $current_user = \Drupal::currentUser();
-        $user_id = $current_user->id();
-
-        $user_entity = User::load($user_id);
-        if (!$user_entity) {
-            \Drupal::logger('organization_validation')->error('Failed to load user entity with ID: @uid', ['@uid' => $user_id]);
-            return;
-        }
-
-        // ✅ Check if the organisation has a submission ID
-        $submission_id = $entity->get('field_submission_id')->value ?? NULL;
-        if (!$submission_id) {
-            \Drupal::logger('organization_validation')->warning('User @uid attempted to become an owner of Organisation @nid, but the organisation has no submission ID.', [
-                '@uid' => $user_id,
-                '@nid' => $entity->id(),
-            ]);
-            return; // Prevent ownership assignment if no submission ID exists
-        }
-
-        // ✅ Get the current owners of the organisation.
-        $existing_owners = $entity->get('field_organisation_owners')->getValue();
-        $owner_ids = array_column($existing_owners, 'target_id');
-
-        // if (!in_array($user_id, $owner_ids) && !in_array('administrator', $current_user->getRoles())) {
-        //     throw new AccessDeniedHttpException('You do not have permission to perform this action.');
-        // }
-
-        // ✅ Check if the user is already in the list.
-        if (!in_array($user_id, $owner_ids) && !in_array('administrator', $current_user->getRoles())) {
-            // ✅ Add the current user to the owners list.
-            $existing_owners[] = ['target_id' => $user_id];
-            $entity->set('field_organisation_owners', $existing_owners);
-
-            \Drupal::logger('organization_validation')->notice('User @uid was added as an Organisation Owner for Organisation @nid', [
-                '@uid' => $user_id,
-                '@nid' => $entity->id(),
-            ]);
-        }
-
-        // if (empty($entity->send_email_to_diamas_admins)) {
-        //     OrganizationValidationHelper::notifyDiamasAdmins($entity);
-        // }
+        $logger->notice('Organisation node @id set to published because moderation state is published.', [
+          '@id' => $entity->id(),
+        ]);
+      }
     }
+
+    $current_user = \Drupal::currentUser();
+    $user_id = $current_user->id();
+    \Drupal::logger('organization_validation')->warning('User @uid attempted to become an owner of Organisation @nid, but the organisation has no submission ID.', [
+      '@uid' => $user_id,
+      '@nid' => $entity->id(),
+    ]);
+
+    $current_user = \Drupal::currentUser();
+    $user_id = $current_user->id();
+
+    $user_entity = User::load($user_id);
+    if (!$user_entity) {
+      \Drupal::logger('organization_validation')->error('Failed to load user entity with ID: @uid', ['@uid' => $user_id]);
+      return;
+    }
+
+    // ✅ Check if the organisation has a submission ID
+    $submission_id = $entity->get('field_submission_id')->value ?? null;
+    if (!$submission_id) {
+      \Drupal::logger('organization_validation')->warning('User @uid attempted to become an owner of Organisation @nid, but the organisation has no submission ID.', [
+        '@uid' => $user_id,
+        '@nid' => $entity->id(),
+      ]);
+      return; // Prevent ownership assignment if no submission ID exists
+    }
+
+    // ✅ Get the current owners of the organisation.
+    $existing_owners = $entity->get('field_organisation_owners')->getValue();
+    $owner_ids = array_column($existing_owners, 'target_id');
+
+    // if (!in_array($user_id, $owner_ids) && !in_array('administrator', $current_user->getRoles())) {
+    //     throw new AccessDeniedHttpException('You do not have permission to perform this action.');
+    // }
+
+    // ✅ Check if the user is already in the list.
+    if (!in_array($user_id, $owner_ids) && !in_array('administrator', $current_user->getRoles())) {
+      // ✅ Add the current user to the owners list.
+      $existing_owners[] = ['target_id' => $user_id];
+      $entity->set('field_organisation_owners', $existing_owners);
+
+      \Drupal::logger('organization_validation')->notice('User @uid was added as an Organisation Owner for Organisation @nid', [
+        '@uid' => $user_id,
+        '@nid' => $entity->id(),
+      ]);
+    }
+
+    // if (empty($entity->send_email_to_diamas_admins)) {
+    //     OrganizationValidationHelper::notifyDiamasAdmins($entity);
+    // }
+  }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update() for Node.
  */
-function organization_validation_node_update(Drupal\Core\Entity\EntityInterface $entity) {
-    if ($entity instanceof Drupal\node\Entity\Node && $entity->bundle() === 'organisation') {
-        
-        // ✅ Get the current owners of the organisation.
-        $existing_owners = $entity->get('field_organisation_owners')->getValue();
-        $owner_ids = array_column($existing_owners, 'target_id');
-        $current_user = \Drupal::currentUser();
-        $user_id = $current_user->id();
-        if (!in_array($user_id, $owner_ids) && !in_array('administrator', $current_user->getRoles())) {
-            throw new AccessDeniedHttpException('You do not have permission to perform this action.');
-        }
+function organization_validation_node_update(Drupal\Core\Entity\EntityInterface $entity)
+{
+  if ($entity instanceof Drupal\node\Entity\Node && $entity->bundle() === 'organisation') {
 
-        // Initialize an array to track changed fields.
-        $changed_fields = [];
-
-        // Loop through all fields in the entity and compare original vs new values.
-        foreach ($entity->getFields() as $field_name => $field) {
-            $original_value = $entity->original->get($field_name)->getValue();
-            $new_value = $entity->get($field_name)->getValue();
-
-            if ($original_value !== $new_value) {
-                $changed_fields[] = $field_name; // Track changed field
-            }
-        }
-
-        \Drupal::logger('organization_validation')->debug('Changed fields: ' . json_encode($changed_fields));
-
-        if (!in_array('status', $changed_fields) && !in_array('field_organisation_owners', $changed_fields)) {
-            OrganizationValidationHelper::notifyDiamasAdmins($entity);
-        }
-
-        if (in_array('status', $changed_fields)) {
-            $original_status = $entity->original->get('status')->value; // Previous state (0 = unpublished, 1 = published)
-            $new_status = $entity->get('status')->value; // Current state
-
-            \Drupal::logger('organization_validation')->debug($original_status . '::to::' . $new_status);
-
-            // Trigger only if status changed to published from something else (not previously published)
-            if ($original_status != 1 && $new_status == 1) {
-                \Drupal::logger('organization_validation')->debug('Node has been newly published.');
-                OrganizationValidationHelper::notifyOwnersForPublish($entity);
-            }
-        }
-
-        $current_user = \Drupal::currentUser();
-        if (!in_array('administrator', $current_user->getRoles())) {
-            // ✅ Redirect the user after the organisation is updated.
-            $response = new RedirectResponse('/check-organisation');
-            $response->send();
-            exit; // ✅ Ensure Drupal stops further execution
-        }
+    // ✅ Get the current owners of the organisation.
+    $existing_owners = $entity->get('field_organisation_owners')->getValue();
+    $owner_ids = array_column($existing_owners, 'target_id');
+    $current_user = \Drupal::currentUser();
+    $user_id = $current_user->id();
+    if (!in_array($user_id, $owner_ids) && !in_array('administrator', $current_user->getRoles())) {
+      throw new AccessDeniedHttpException('You do not have permission to perform this action.');
     }
+
+    // Initialize an array to track changed fields.
+    $changed_fields = [];
+
+    // Loop through all fields in the entity and compare original vs new values.
+    foreach ($entity->getFields() as $field_name => $field) {
+      $original_value = $entity->original->get($field_name)->getValue();
+      $new_value = $entity->get($field_name)->getValue();
+
+      if ($original_value !== $new_value) {
+        $changed_fields[] = $field_name; // Track changed field
+      }
+    }
+
+    \Drupal::logger('organization_validation')->debug('Changed fields: ' . json_encode($changed_fields));
+
+    if (!in_array('status', $changed_fields) && !in_array('field_organisation_owners', $changed_fields)) {
+      OrganizationValidationHelper::notifyDiamasAdmins($entity);
+    }
+
+    if (in_array('status', $changed_fields)) {
+      $original_status = $entity->original->get('status')->value; // Previous state (0 = unpublished, 1 = published)
+      $new_status = $entity->get('status')->value; // Current state
+
+      \Drupal::logger('organization_validation')->debug($original_status . '::to::' . $new_status);
+
+      // Trigger only if status changed to published from something else (not previously published)
+      if ($original_status != 1 && $new_status == 1) {
+        \Drupal::logger('organization_validation')->debug('Node has been newly published.');
+        OrganizationValidationHelper::notifyOwnersForPublish($entity);
+      }
+    }
+
+    $current_user = \Drupal::currentUser();
+    if (!in_array('administrator', $current_user->getRoles())) {
+      // ✅ Redirect the user after the organisation is updated.
+      $response = new RedirectResponse('/check-organisation');
+      $response->send();
+      exit; // ✅ Ensure Drupal stops further execution
+    }
+  }
 }
 
-function organization_validation_node_insert(Drupal\Core\Entity\EntityInterface $entity) {
-    if ($entity instanceof Drupal\node\Entity\Node && $entity->bundle() === 'organisation') {
-        // \Drupal::logger('organization_validation')->debug('organization_validation_node_insert:: Redirecting to Check Organisation after organisation save @nid', [
-        //     '@nid' => $entity->id(),
-        // ]);
+function organization_validation_node_insert(Drupal\Core\Entity\EntityInterface $entity)
+{
+  if ($entity instanceof Drupal\node\Entity\Node && $entity->bundle() === 'organisation') {
+    // \Drupal::logger('organization_validation')->debug('organization_validation_node_insert:: Redirecting to Check Organisation after organisation save @nid', [
+    //     '@nid' => $entity->id(),
+    // ]);
 
-        OrganizationValidationHelper::notifyDiamasAdmins($entity);
-        
-        $current_user = \Drupal::currentUser();
-        if (!in_array('administrator', $current_user->getRoles())) {
-            // ✅ Redirect the user after the organisation is updated.
-            $response = new RedirectResponse('/check-organisation');
-            $response->send();
-            exit; // ✅ Ensure Drupal stops further execution
-        }
+    OrganizationValidationHelper::notifyDiamasAdmins($entity);
+
+    $current_user = \Drupal::currentUser();
+    if (!in_array('administrator', $current_user->getRoles())) {
+      // ✅ Redirect the user after the organisation is updated.
+      $response = new RedirectResponse('/check-organisation');
+      $response->send();
+      exit; // ✅ Ensure Drupal stops further execution
     }
+  }
 }
 
 /**
  * Sends a verification email with a link to check organisation.
  */
-function organization_validation_send_verification_email(User $user) {
-    $uid = $user->id();
-    $email = $user->getEmail();
+function organization_validation_send_verification_email(User $user)
+{
+  $uid = $user->id();
+  $email = $user->getEmail();
 
-    if (empty($uid) || !is_numeric($uid)) {
-        \Drupal::logger('organization_validation')->error('Attempted to send verification email to invalid user ID: @uid', ['@uid' => $uid]);
-        return;
-    }
+  if (empty($uid) || !is_numeric($uid)) {
+    \Drupal::logger('organization_validation')->error('Attempted to send verification email to invalid user ID: @uid', ['@uid' => $uid]);
+    return;
+  }
 
-    // Build the link to the organisation check page.
-    $organisation_check_url = \Drupal::service('url_generator')->generateFromRoute(
-        'organization_validation.check_organisation',
-        [],
-        ['absolute' => TRUE]
-    );
+  // Build the link to the organisation check page.
+  $organisation_check_url = \Drupal::service('url_generator')->generateFromRoute(
+    'organization_validation.check_organisation',
+    [],
+    ['absolute' => true],
+  );
 
-    // ✅ Log the URL before sending the email.
-    \Drupal::logger('organization_validation')->notice('Sending verification email to @email with URL: @url', [
-        '@email' => $email,
-        '@url' => $organisation_check_url,
-    ]);
+  // ✅ Log the URL before sending the email.
+  \Drupal::logger('organization_validation')->notice('Sending verification email to @email with URL: @url', [
+    '@email' => $email,
+    '@url' => $organisation_check_url,
+  ]);
 
-    // ✅ Use centralized email system
-    \Drupal::service('plugin.manager.mail')->mail(
-        'organization_validation',
-        'verify_organisation',
-        $email,
-        \Drupal::languageManager()->getDefaultLanguage()->getId(),
-        [
-            'full_name' => $user->getDisplayName(),
-            'check_organisation_link' => $organisation_check_url,
-        ]
-    );
+  // ✅ Use centralized email system
+  \Drupal::service('plugin.manager.mail')->mail(
+    'organization_validation',
+    'verify_organisation',
+    $email,
+    \Drupal::languageManager()->getDefaultLanguage()->getId(),
+    [
+      'full_name' => $user->getDisplayName(),
+      'check_organisation_link' => $organisation_check_url,
+    ],
+  );
 }
 
 
@@ -419,125 +426,129 @@ function organization_validation_send_verification_email(User $user) {
  * Implements hook_mail().
  * Fetches email content from the module's YAML file.
  */
-function organization_validation_mail($key, &$message, $params) {
-    organization_validation_send_email($key, NULL, $params, $message);
+function organization_validation_mail($key, &$message, $params)
+{
+  organization_validation_send_email($key, null, $params, $message);
 }
 
 /**
  * Loads email templates from the module's YAML file.
  */
-function organization_validation_load_email_templates() {
-    static $emails = NULL;
+function organization_validation_load_email_templates()
+{
+  static $emails = null;
 
-    if ($emails === NULL) {
-        $file_path = DRUPAL_ROOT . '/modules/custom/organization_validation/organization_validation.emails.yml';
+  if ($emails === null) {
+    $file_path = DRUPAL_ROOT . '/modules/custom/organization_validation/organization_validation.emails.yml';
 
-        if (file_exists($file_path)) {
-            $emails = Yaml::parseFile($file_path);
-        } else {
-            \Drupal::logger('organization_validation')->error("Email template file not found: $file_path");
-            $emails = [];
-        }
+    if (file_exists($file_path)) {
+      $emails = Yaml::parseFile($file_path);
+    } else {
+      \Drupal::logger('organization_validation')->error("Email template file not found: $file_path");
+      $emails = [];
     }
+  }
 
-    return $emails;
+  return $emails;
 }
 
 /**
  * Implements hook_mail_alter().
  * Logs user email confirmation links.
  */
-function organization_validation_mail_alter(&$message) {
+function organization_validation_mail_alter(&$message)
+{
 
-    $extraBccs = [];
+  $extraBccs = [];
 
-    // 1) Normalize existing Bccs (trim, drop empties, dedupe)
-    $existingBccs = [];
-    if (!empty($message['headers']['Bcc'])) {
-        $existingBccs = is_array($message['headers']['Bcc'])
-        ? $message['headers']['Bcc']
-        : explode(',', $message['headers']['Bcc']);
+  // 1) Normalize existing Bccs (trim, drop empties, dedupe)
+  $existingBccs = [];
+  if (!empty($message['headers']['Bcc'])) {
+    $existingBccs = is_array($message['headers']['Bcc'])
+    ? $message['headers']['Bcc']
+    : explode(',', $message['headers']['Bcc']);
 
-        $existingBccs = array_values(array_unique(array_filter(array_map('trim', $existingBccs))));
-    }
+    $existingBccs = array_values(array_unique(array_filter(array_map('trim', $existingBccs))));
+  }
 
-    // 2) Only add extras if provided (dev/stage)
-    if (!empty($extraBccs)) {
-        $existingBccs = array_values(array_unique(array_merge($existingBccs, $extraBccs)));
-    }
+  // 2) Only add extras if provided (dev/stage)
+  if (!empty($extraBccs)) {
+    $existingBccs = array_values(array_unique(array_merge($existingBccs, $extraBccs)));
+  }
 
-    // 3) Write back only if we actually have Bccs; avoid empty header
-    if (!empty($existingBccs)) {
-        $message['headers']['Bcc'] = implode(', ', $existingBccs);
-    } else {
-        unset($message['headers']['Bcc']); // or leave untouched if you prefer
-    }
+  // 3) Write back only if we actually have Bccs; avoid empty header
+  if (!empty($existingBccs)) {
+    $message['headers']['Bcc'] = implode(', ', $existingBccs);
+  } else {
+    unset($message['headers']['Bcc']); // or leave untouched if you prefer
+  }
 }
 
 /**
  * Send an email using a predefined template from the module's YAML file.
  */
-function organization_validation_send_email($key, $recipient = NULL, $params = [], &$message = NULL) {
-    $emails = organization_validation_load_email_templates();
+function organization_validation_send_email($key, $recipient = null, $params = [], &$message = null)
+{
+  $emails = organization_validation_load_email_templates();
 
-    // ✅ Ensure the email template exists
-    if (!isset($emails[$key])) {
-        \Drupal::logger('organization_validation')->error("Missing email template for key: $key");
-        return;
+  // ✅ Ensure the email template exists
+  if (!isset($emails[$key])) {
+    \Drupal::logger('organization_validation')->error("Missing email template for key: $key");
+    return;
+  }
+
+  // ✅ Load email details
+  $subject = $emails[$key]['subject'];
+  $body_template = $emails[$key]['body'];
+  $from = $emails[$key]['from'] ?? 'EDCH Registry <no-reply@edch.eu>'; // ✅ Default if missing
+
+  // ✅ Log placeholders before replacement
+  \Drupal::logger('organization_validation')->notice("Email placeholders before replacement for [$key]: " . json_encode($params));
+
+  // ✅ Exclude `subject` and `body` from placeholders (they are system keys)
+  $params_filtered = array_diff_key($params, array_flip(['subject', 'body']));
+
+  // ✅ Replace placeholders in the subject and body
+  foreach ($params_filtered as $placeholder => $value) {
+    \Drupal::logger('organization_validation')->notice("Replacing placeholder: [$placeholder] with value: $value");
+    if (is_scalar($value)) {
+      $body_template = str_replace("[$placeholder]", (string) $value, $body_template);
+      $subject = str_replace("[$placeholder]", (string) $value, $subject);
     }
+  }
 
-    // ✅ Load email details
-    $subject = $emails[$key]['subject'];
-    $body_template = $emails[$key]['body'];
-    $from = $emails[$key]['from'] ?? 'EDCH Registry <no-reply@edch.eu>'; // ✅ Default if missing
-
-    // ✅ Log placeholders before replacement
-    \Drupal::logger('organization_validation')->notice("Email placeholders before replacement for [$key]: " . json_encode($params));
-
-    // ✅ Exclude `subject` and `body` from placeholders (they are system keys)
-    $params_filtered = array_diff_key($params, array_flip(['subject', 'body']));
-
-    // ✅ Replace placeholders in the subject and body
-    foreach ($params_filtered as $placeholder => $value) {
-        \Drupal::logger('organization_validation')->notice("Replacing placeholder: [$placeholder] with value: $value");
-        if (is_scalar($value)) {
-            $body_template = str_replace("[$placeholder]", (string) $value, $body_template);
-            $subject = str_replace("[$placeholder]", (string) $value, $subject);
-        }
+  // Apply headers (like Bcc)
+  if (!empty($params['headers']) && is_array($params['headers'])) {
+    foreach ($params['headers'] as $header => $value) {
+      $message['headers'][$header] = $value;
     }
+  }
 
-    // Apply headers (like Bcc)
-    if (!empty($params['headers']) && is_array($params['headers'])) {
-        foreach ($params['headers'] as $header => $value) {
-            $message['headers'][$header] = $value;
-        }
-    }
+  // ✅ Log processed email before sending
+  \Drupal::logger('organization_validation')->notice("Processed email [$key] with subject: $subject and body: $body_template");
 
-    // ✅ Log processed email before sending
-    \Drupal::logger('organization_validation')->notice("Processed email [$key] with subject: $subject and body: $body_template");
+  // ✅ If called from hook_mail(), return formatted message
+  if ($message !== null) {
+    $message['subject'] = $subject;
+    $message['body'][] = $body_template;
+    return;
+  }
 
-    // ✅ If called from hook_mail(), return formatted message
-    if ($message !== NULL) {
-        $message['subject'] = $subject;
-        $message['body'][] = $body_template;
-        return;
-    }
+  // ✅ Send email only if recipient is provided
+  if ($recipient) {
+    \Drupal::service('plugin.manager.mail')->mail(
+      'organization_validation',
+      $key,
+      $recipient,
+      \Drupal::languageManager()->getDefaultLanguage()->getId(),
+      ['subject' => $subject, 'body' => $body_template],
+      $from,
+      true,
+    );
 
-    // ✅ Send email only if recipient is provided
-    if ($recipient) {
-        \Drupal::service('plugin.manager.mail')->mail(
-            'organization_validation',
-            $key,
-            $recipient,
-            \Drupal::languageManager()->getDefaultLanguage()->getId(),
-            ['subject' => $subject, 'body' => $body_template],
-            $from,
-            TRUE
-        );
-
-        // ✅ Log email sent event
-        \Drupal::logger('organization_validation')->notice("Sent email [$key] to [$recipient]");
-    }
+    // ✅ Log email sent event
+    \Drupal::logger('organization_validation')->notice("Sent email [$key] to [$recipient]");
+  }
 }
 
 
@@ -586,25 +597,27 @@ function organization_validation_send_email($key, $recipient = NULL, $params = [
 /**
  * Implements hook_theme().
  */
-function organization_validation_theme($existing, $type, $theme, $path) {
-    return [
-        'organization_validation_admin_verify' => [
-            'variables' => [
-                'user_details' => [],
-                'organisation_details' => [],
-                'verification_form' => NULL,
-            ],
-            'template' => 'organization-validation-admin-verify',
-        ],
-    ];
+function organization_validation_theme($existing, $type, $theme, $path)
+{
+  return [
+    'organization_validation_admin_verify' => [
+      'variables' => [
+        'user_details' => [],
+        'organisation_details' => [],
+        'verification_form' => null,
+      ],
+      'template' => 'organization-validation-admin-verify',
+    ],
+  ];
 }
 
 /**
  * Redirect user after save profile
  */
- function organization_validation_form_user_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-    // Add a custom submit handler to the form.
-    $form['actions']['submit']['#submit'][] = 'organization_validation_user_form_submit';
+function organization_validation_form_user_form_alter(array &$form, FormStateInterface $form_state, $form_id)
+{
+  // Add a custom submit handler to the form.
+  $form['actions']['submit']['#submit'][] = 'organization_validation_user_form_submit';
 }
 
 /**
@@ -617,20 +630,20 @@ function organization_validation_theme($existing, $type, $theme, $path) {
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   An object containing the current state of the form.
  */
-function organization_validation_user_form_submit(array &$form, FormStateInterface $form_state) {
-    // Get the user entity being edited.
-    $user = $form_state->getFormObject()->getEntity();
+function organization_validation_user_form_submit(array &$form, FormStateInterface $form_state)
+{
+  // Get the user entity being edited.
+  $user = $form_state->getFormObject()->getEntity();
 
-    // Get the currently logged-in user.
-    $current_user = \Drupal::currentUser();
+  // Get the currently logged-in user.
+  $current_user = \Drupal::currentUser();
 
-    $formUserId = $user->id();
-    $currentUserId = $current_user->id();
+  $formUserId = $user->id();
+  $currentUserId = $current_user->id();
 
-    // Check if the current user is the owner of the profile.
-    if ($user->id() == $current_user->id()) {
-        // Set the redirection path after form submission.
-        $form_state->setRedirect('organization_validation.check_organisation');
-    }
+  // Check if the current user is the owner of the profile.
+  if ($user->id() == $current_user->id()) {
+    // Set the redirection path after form submission.
+    $form_state->setRedirect('organization_validation.check_organisation');
+  }
 }
-

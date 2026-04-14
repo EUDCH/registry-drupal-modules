@@ -6,13 +6,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
-* Controller for Geonames autocomplete.
-*/
+ * Controller for Geonames autocomplete.
+ */
 class GeonamesController
 {
   /**
-  * Callback for Geonames autocomplete.
-  */
+   * Callback for Geonames autocomplete.
+   */
   public function autocomplete(Request $request)
   {
     // Get query and country_code from the request
@@ -39,8 +39,8 @@ class GeonamesController
       if (!empty($data['geonames'])) {
         foreach ($data['geonames'] as $city) {
           $cities[] = [
-           'value' => $city['name'],
-           'label' => $city['name'] . ', ' . $city['adminName1'] . ', ' . $city['countryName'],
+            'value' => $city['name'],
+            'label' => $city['name'] . ', ' . $city['adminName1'] . ', ' . $city['countryName'],
           ];
         }
       }

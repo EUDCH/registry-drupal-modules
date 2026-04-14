@@ -7,21 +7,21 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
 
 /**
-* Provides a form for verifying a user.
-*/
+ * Provides a form for verifying a user.
+ */
 class VerifyUserForm extends FormBase
 {
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function getFormId()
   {
     return 'organization_validation_verify_user_form';
   }
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, $user_id = null)
   {
     $user = User::load($user_id);
@@ -50,8 +50,8 @@ class VerifyUserForm extends FormBase
   }
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state)
   {
     $user_id = $form_state->getValue('user_id');

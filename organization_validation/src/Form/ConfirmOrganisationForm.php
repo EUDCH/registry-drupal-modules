@@ -7,49 +7,49 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
-* Organisation Confirmation Form.
-*/
+ * Organisation Confirmation Form.
+ */
 class ConfirmOrganisationForm extends FormBase
 {
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function getFormId()
   {
     return 'confirm_organisation_form';
   }
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, $org_id = null)
   {
     $form['org_id'] = [
-     '#type' => 'hidden',
-     '#value' => $org_id,
+      '#type' => 'hidden',
+      '#value' => $org_id,
     ];
 
     $form['confirmation'] = [
-     '#type' => 'radios',
-     '#title' => t('Is this your organisation?'),
-     '#options' => [
-      'yes' => t('Yes'),
-      'no' => t('No'),
-     ],
-     '#required' => true,
+      '#type' => 'radios',
+      '#title' => t('Is this your organisation?'),
+      '#options' => [
+        'yes' => t('Yes'),
+        'no' => t('No'),
+      ],
+      '#required' => true,
     ];
 
     $form['submit'] = [
-     '#type' => 'submit',
-     '#value' => t('Continue'),
+      '#type' => 'submit',
+      '#value' => t('Continue'),
     ];
 
     return $form;
   }
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state)
   {
     $org_id = $form_state->getValue('org_id');

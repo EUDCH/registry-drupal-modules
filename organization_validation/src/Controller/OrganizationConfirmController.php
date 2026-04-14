@@ -8,36 +8,36 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
-* Handles Organisation Confirmation page.
-*/
+ * Handles Organisation Confirmation page.
+ */
 class OrganizationConfirmController extends ControllerBase
 {
   /**
-  * The entity type manager.
-  */
+   * The entity type manager.
+   */
   protected $entityTypeManager;
 
   /**
-  * Constructor.
-  */
+   * Constructor.
+   */
   public function __construct(EntityTypeManagerInterface $entity_type_manager)
   {
-     $this->entityTypeManager = $entity_type_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
-  * Dependency Injection.
-  */
+   * Dependency Injection.
+   */
   public static function create(ContainerInterface $container)
   {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
     );
   }
 
   /**
-  * Organisation Confirmation Page.
-  */
+   * Organisation Confirmation Page.
+   */
   public function confirmPage(RouteMatchInterface $route_match)
   {
     $org_id = $route_match->getParameter('org');
@@ -52,12 +52,12 @@ class OrganizationConfirmController extends ControllerBase
     $country = $organization->get('field_country')->value ?? 'Unknown';
 
     return [
-     '#theme' => 'confirmation_page',
-     '#org_name' => $org_name,
-     '#country' => $country,
-     '#org_url' => $org_url,
-     '#form' => \Drupal::formBuilder()->
-      getForm('Drupal\organization_validation\Form\ConfirmOrganisationForm', $org_id),
+      '#theme' => 'confirmation_page',
+      '#org_name' => $org_name,
+      '#country' => $country,
+      '#org_url' => $org_url,
+      '#form' => \Drupal::formBuilder()
+       ->getForm('Drupal\organization_validation\Form\ConfirmOrganisationForm', $org_id),
     ];
   }
 }

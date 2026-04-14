@@ -10,19 +10,19 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
-* Processes user verification in a queue to avoid database locks.
-*
-* @QueueWorker(
-*   id = "user_verification_queue",
-*   title = @Translation("User Verification Queue"),
-*   cron = {"time" = 60}
-* )
-*/
+ * Processes user verification in a queue to avoid database locks.
+ *
+ * @QueueWorker(
+ *   id = "user_verification_queue",
+ *   title = @Translation("User Verification Queue"),
+ *   cron = {"time" = 60}
+ * )
+ */
 class UserVerificationQueue extends QueueWorkerBase
 {
   /**
-  * Processes the queued verification request.
-  */
+   * Processes the queued verification request.
+   */
   public function processItem($data)
   {
     $user = User::load($data['uid']);
@@ -36,15 +36,15 @@ class UserVerificationQueue extends QueueWorkerBase
 
     // ? Generate verification link
     $verification_link = Url::fromRoute('organization_validation.verify_organization', [
-     'user' => $user->id(),
+      'user' => $user->id(),
     ], ['absolute' => true])->toString();
 
     // ? Log the verification link
-    \Drupal::logger('organization_validation')->
-      notice('Verification link for user @user: <a href=":link" target="_blank">:link</a>', [
-     '@user' => $user->getDisplayName(),
-     ':link' => $verification_link,
-    ]);
+    \Drupal::logger('organization_validation')
+      ->notice('Verification link for user @user: <a href=":link" target="_blank">:link</a>', [
+        '@user' => $user->getDisplayName(),
+        ':link' => $verification_link,
+      ]);
 
     // ? Send email notification
     $mailManager = \Drupal::service('plugin.manager.mail');

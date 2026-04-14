@@ -7,13 +7,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\user\Entity\User;
 
 /**
-* Handles the organization verification logic.
-*/
+ * Handles the organization verification logic.
+ */
 class VerifyOrganizationController extends ControllerBase
 {
   /**
-  * Verifies the user's organization.
-  */
+   * Verifies the user's organization.
+   */
   public function verify($user)
   {
     $user = User::load($user);
@@ -25,7 +25,7 @@ class VerifyOrganizationController extends ControllerBase
 
     if (empty($organization_name)) {
       return [
-       '#markup' => '<p><strong>Error:</strong> No organization name found for this user.</p>',
+        '#markup' => '<p><strong>Error:</strong> No organization name found for this user.</p>',
       ];
     }
 
@@ -40,16 +40,16 @@ class VerifyOrganizationController extends ControllerBase
     if (!empty($result)) {
       // Organization exists; redirect to its page.
       $organization_id = reset($result);
-      return new RedirectResponse(\Drupal::service('path.alias_manager')->
-       getAliasByPath('/node/' . $organization_id));
+      return new RedirectResponse(\Drupal::service('path.alias_manager')
+       ->getAliasByPath('/node/' . $organization_id));
     } else {
       // Organization does not exist; redirect to the add form with prefilled data.
       $url = \Drupal\Core\Url::fromRoute('node.add', [
-      'node_type' => 'organizations',
+        'node_type' => 'organizations',
       ], [
-       'query' => [
-        'title' => $organization_name,
-       ],
+        'query' => [
+          'title' => $organization_name,
+        ],
       ]);
       return new RedirectResponse($url->toString());
     }

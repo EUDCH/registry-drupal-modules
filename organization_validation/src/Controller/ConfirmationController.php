@@ -7,44 +7,44 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
-* Provides a confirmation page for the organization validation workflow.
-*/
+ * Provides a confirmation page for the organization validation workflow.
+ */
 class ConfirmationController extends ControllerBase
 {
   /**
-  * The request stack service.
-  *
-  * @var \Symfony\Component\HttpFoundation\RequestStack
-  */
+   * The request stack service.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
   protected $requestStack;
 
   /**
-  * Constructs a ConfirmationController object.
-  *
-  * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-  *   The request stack service.
-  */
+   * Constructs a ConfirmationController object.
+   *
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack service.
+   */
   public function __construct(RequestStack $request_stack)
   {
     $this->requestStack = $request_stack;
   }
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container)
   {
     return new static(
-      $container->get('request_stack')
+      $container->get('request_stack'),
     );
   }
 
   /**
-  * Displays a confirmation message using Drupal's default layout.
-  *
-  * @return array
-  *   Render array for the confirmation page.
-  */
+   * Displays a confirmation message using Drupal's default layout.
+   *
+   * @return array
+   *   Render array for the confirmation page.
+   */
   public function confirmationPage()
   {
     $request = $this->requestStack->getCurrentRequest();

@@ -8,8 +8,8 @@ use Drupal\user\Entity\User;
 class OrganizationValidationHelper
 {
   /**
-  * ✅ Finds a matching organisations based on user entity
-  */
+   * ✅ Finds a matching organisations based on user entity
+   */
   public static function findMatchingOrganisations($user)
   {
     if (!$user instanceof User) {
@@ -18,8 +18,8 @@ class OrganizationValidationHelper
 
     $email = $user->getEmail();
     $country = $user->get('field_organisation_country')->value ?? '';
-    $country_label = $user->get('field_organisation_country')->getFieldDefinition()->
-     getSetting('allowed_values')[$country] ?? $country;
+    $country_label = $user->get('field_organisation_country')->getFieldDefinition()
+     ->getSetting('allowed_values')[$country] ?? $country;
     $web_address = $user->get('field_org_web_address')->value ?? '';
     $org_name = $user->get('field_organization_name')->value ?? '';
 
@@ -88,8 +88,8 @@ class OrganizationValidationHelper
   }
 
   /**
-  * Generates the form URL for a given organisation node.
-  */
+   * Generates the form URL for a given organisation node.
+   */
   public static function generateFormUrl(Node $organisation): string
   {
     \Drupal::logger('custom_module')->notice('Node type: @type', ['@type' => $organisation->getType()]);
@@ -111,8 +111,8 @@ class OrganizationValidationHelper
     $parent_organisation_official_name_EN = $organisation->get('field_parent_org_name_en')->value ?? '';
     $parent_organisation_acronym = $organisation->get('field_parent_org_acronym')->value ?? '';
     $legal_entity_type = $organisation->get('field_legal_entity_type_of_the_p')->value ?? '';
-    $number_of_full_time_equivalent_FTE_paid_staff = $organisation->
-     get('field_number_of_full_time_equiva')->value ?? '';
+    $number_of_full_time_equivalent_FTE_paid_staff = $organisation
+     ->get('field_number_of_full_time_equiva')->value ?? '';
     $geographical_range_of_services = $organisation->get('field_geographical_range_of_serv')->value ?? '';
     $services_urls = $organisation->get('field_link_s_where_the_services')->value ?? '';
     $published_or_supported_output_types = $organisation->get('field_published_or_supported_out')->value ?? '';
@@ -150,8 +150,8 @@ class OrganizationValidationHelper
 
 
   /**
-  * Sends an ownership request email to the organisation's owners.
-  */
+   * Sends an ownership request email to the organisation's owners.
+   */
   public static function sendOwnershipRequest(Node $organisation, User $requesting_user)
   {
     $owner_emails = [];
@@ -187,7 +187,7 @@ class OrganizationValidationHelper
       $approval_link = \Drupal::service('url_generator')->generateFromRoute(
         'organization_validation.approve_ownership',
         ['organisation' => $organisation->id(), 'user' => $requesting_user->id()],
-        ['absolute' => true]
+        ['absolute' => true],
       );
 
       $operasAdminsUids = \Drupal::entityQuery('user')
@@ -217,8 +217,8 @@ class OrganizationValidationHelper
         $full_name = $requesting_user->get('field_full_name')->value ?? 'N/A';
         //$organisation_country = $requesting_user->get('field_organisation_country')->value ?? 'N/A';
         $country = $requesting_user->get('field_organisation_country')->value ?? '';
-        $country_label = $requesting_user->get('field_organisation_country')->
-         getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
+        $country_label = $requesting_user->get('field_organisation_country')
+         ->getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
         $organisation_role = $requesting_user->get('field_organisation_role')->value ?? 'N/A';
 
         // $params = [
@@ -251,16 +251,16 @@ class OrganizationValidationHelper
           \Drupal::languageManager()->getDefaultLanguage()->getId(),
           $params,
           null,
-          true
+          true,
         );
       }
 
       // ✅ Log the email event
-      \Drupal::logger('organization_validation')->
-       notice('Ownership request sent to owners of Organisation @organisation for User @user', [
-        '@organisation' => $organisation->getTitle(),
-        '@user' => $requesting_user->getDisplayName(),
-      ]);
+      \Drupal::logger('organization_validation')
+       ->notice('Ownership request sent to owners of Organisation @organisation for User @user', [
+         '@organisation' => $organisation->getTitle(),
+         '@user' => $requesting_user->getDisplayName(),
+       ]);
 
       $requesting_user->set('field_has_requested_ownership', true);
       $requesting_user->save(); // ✅ Save the updated user entity
@@ -270,8 +270,8 @@ class OrganizationValidationHelper
   }
 
   /**
-  * Sends an email notification to all admin users when a new user confirms their organisational email.
-  */
+   * Sends an email notification to all admin users when a new user confirms their organisational email.
+   */
   public static function notifyDiamasAdmins(Node $organisation)
   {
     // Get all admin users (users with the "administrator" role).
@@ -313,7 +313,7 @@ class OrganizationValidationHelper
       $review_org_url = \Drupal\Core\Url::fromRoute(
         'entity.node.canonical',
         ['node' => $orgId],
-        ['absolute' => true]
+        ['absolute' => true],
       )->toString();
 
       // ✅ Email parameters with correct data.
@@ -332,22 +332,22 @@ class OrganizationValidationHelper
           'admin_notification',
           $admin_email,
           \Drupal::languageManager()->getDefaultLanguage()->getId(),
-          $params
+          $params,
         );
       }
 
       // ✅ Log the notification.
-      \Drupal::logger('organization_validation')->
-        notice('Admin notification sent: Organisation pending review. Org: @name (@email)', [
-        '@name' => $organisation_name,
-        '@email' => $organisation_email_adress,
-      ]);
+      \Drupal::logger('organization_validation')
+        ->notice('Admin notification sent: Organisation pending review. Org: @name (@email)', [
+          '@name' => $organisation_name,
+          '@email' => $organisation_email_adress,
+        ]);
     }
   }
 
   /**
-  * Sends an email notification to all admin users when a new user confirms their organisational email.
-  */
+   * Sends an email notification to all admin users when a new user confirms their organisational email.
+   */
   public static function notifyOwnersForPublish(Node $organisation)
   {
     // ✅ Retrieve current owners of the organisation.
@@ -384,7 +384,7 @@ class OrganizationValidationHelper
         $review_org_url = \Drupal\Core\Url::fromRoute(
           'entity.node.canonical',
           ['node' => $orgId],
-          ['absolute' => true]
+          ['absolute' => true],
         )->toString();
 
         // ✅ Email parameters with correct data.
@@ -403,16 +403,16 @@ class OrganizationValidationHelper
           'owner_notification_when_org_published',
           $owner_email,
           \Drupal::languageManager()->getDefaultLanguage()->getId(),
-          $params
+          $params,
         );
 
         // ✅ Log the notification.
         \Drupal::logger('organization_validation')->notice(
           'Owner notification sent: Organisation is published. Org: @name (@email)',
           [
-          '@name' => $organisation_name,
-          '@email' => $organisation_email_adress,
-          ]
+            '@name' => $organisation_name,
+            '@email' => $organisation_email_adress,
+          ],
         );
       }
     }
@@ -422,35 +422,35 @@ class OrganizationValidationHelper
 /**
   * ✅ Finds a matching organisation based on name or email.
   */
-  // public static function findMatchingOrganisation($name, $email) {
-  //     if (empty($name) || empty($email)) {
-  //         return NULL;
-  //     }
+// public static function findMatchingOrganisation($name, $email) {
+//     if (empty($name) || empty($email)) {
+//         return NULL;
+//     }
 
-  //     // ✅ Extract the email domain
-  //     $email_domain = substr(strrchr($email, '@'), 1);
+//     // ✅ Extract the email domain
+//     $email_domain = substr(strrchr($email, '@'), 1);
 
-  //     // ✅ Query for organisations
-  //     $query = \Drupal::entityQuery('node')
-  //         ->condition('type', 'organisations')
-  //         ->accessCheck(FALSE);
+//     // ✅ Query for organisations
+//     $query = \Drupal::entityQuery('node')
+//         ->condition('type', 'organisations')
+//         ->accessCheck(FALSE);
 
-  //     $or_group = $query->orConditionGroup();
+//     $or_group = $query->orConditionGroup();
 
-  //     // ✅ Check exact match with Organisation Name
-  //     $or_group->condition('field_ipsp_name', $name, '=');
+//     // ✅ Check exact match with Organisation Name
+//     $or_group->condition('field_ipsp_name', $name, '=');
 
-  //     // ✅ Check domain match against `field_ipsp_website_url` and `field_ipsp_contact_email`
-  //     $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'organisations');
-  //     if (isset($field_definitions['field_ipsp_website_url'])) {
-  //         $or_group->condition('field_ipsp_website_url', '%' . $email_domain, 'LIKE');
-  //     }
-  //     if (isset($field_definitions['field_ipsp_contact_email'])) {
-  //         $or_group->condition('field_ipsp_contact_email', '%' . $email_domain, 'LIKE');
-  //     }
+//     // ✅ Check domain match against `field_ipsp_website_url` and `field_ipsp_contact_email`
+//     $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'organisations');
+//     if (isset($field_definitions['field_ipsp_website_url'])) {
+//         $or_group->condition('field_ipsp_website_url', '%' . $email_domain, 'LIKE');
+//     }
+//     if (isset($field_definitions['field_ipsp_contact_email'])) {
+//         $or_group->condition('field_ipsp_contact_email', '%' . $email_domain, 'LIKE');
+//     }
 
-  //     $query->condition($or_group);
-  //     $result = $query->execute();
+//     $query->condition($or_group);
+//     $result = $query->execute();
 
-  //     return !empty($result) ? Node::load(reset($result)) : NULL;
-  // }
+//     return !empty($result) ? Node::load(reset($result)) : NULL;
+// }

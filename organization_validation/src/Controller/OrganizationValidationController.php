@@ -15,8 +15,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Component\Serialization\Json;
 
 /**
-* Controller for checking organisation after verification.
-*/
+ * Controller for checking organisation after verification.
+ */
 class OrganizationValidationController extends ControllerBase
 {
   public function checkOrganisation()
@@ -38,8 +38,8 @@ class OrganizationValidationController extends ControllerBase
     // ✅ Extract user details
     $email = $account->getEmail();
     $country = $account->get('field_organisation_country')->value ?? 'Unknown';
-    $country_label = $account->get('field_organisation_country')->
-     getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
+    $country_label = $account->get('field_organisation_country')
+     ->getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
     $web_address = $account->get('field_org_web_address')->value ?? 'N/A';
     $org_name = $account->get('field_organization_name')->value ?? 'N/A';
 
@@ -70,8 +70,8 @@ class OrganizationValidationController extends ControllerBase
 
     $owned_organisation_ids = $query->execute();
     $own_organisation = !empty($owned_organisation_ids) ? Node::load(reset($owned_organisation_ids)) : null;
-    $matching_organisations = !$own_organisation ?
-     OrganizationValidationHelper::findMatchingOrganisations($account) : [];
+    $matching_organisations = !$own_organisation
+     ? OrganizationValidationHelper::findMatchingOrganisations($account) : [];
 
     $organisation_actions_section = [
       '#type' => 'container',
@@ -85,7 +85,7 @@ class OrganizationValidationController extends ControllerBase
       '#url' => \Drupal\Core\Url::fromUserInput('/form/organisation-registry'),
       '#attributes' => [
         'class' => ['button', 'button--primary'],
-        'style' => 'float: right; margin-bottom: 10px;'
+        'style' => 'float: right; margin-bottom: 10px;',
       ],
     ];
 
@@ -104,7 +104,7 @@ class OrganizationValidationController extends ControllerBase
       ];
 
       $edit_url = \Drupal\Core\Url::fromUserInput(
-        "/webform/organisation_registry/submissions/{$organisation_submission_id}/edit"
+        "/webform/organisation_registry/submissions/{$organisation_submission_id}/edit",
       );
       $organisation_actions_section['edit_button'] = [
         '#type' => 'link',
@@ -124,8 +124,8 @@ class OrganizationValidationController extends ControllerBase
       foreach ($matching_organisations as $match) {
         if ($match['node'] instanceof Node) {
           $organisation = $match['node'];
-          $name = $organisation->get('field_ipsp_name')->value ??
-            $organisation->get('field_ipsp_name_en')->value ?? 'N/A';
+          $name = $organisation->get('field_ipsp_name')->value
+            ?? $organisation->get('field_ipsp_name_en')->value ?? 'N/A';
           $email = $organisation->get('field_ipsp_contact_email')->value ?? 'N/A';
           $website = $organisation->get('field_ipsp_website_url')->first()->getValue()['uri'] ?? 'N/A';
           $country = $organisation->get('field_country')->value ?? 'N/A';
@@ -156,10 +156,10 @@ class OrganizationValidationController extends ControllerBase
               'form' => \Drupal::formBuilder()->getForm(
                 '\Drupal\organization_validation\Form\RequestOwnershipForm',
                 $organisation->id(),
-                $account->id()
+                $account->id(),
               ),
               '#attributes' => ['class' => ['button', 'button--primary'],
-               'style' => ['display:', 'none']],
+                'style' => ['display:', 'none']],
             ];
 
             $rendered_action_button = \Drupal::service('renderer')->render($request_ownership_button);
@@ -403,7 +403,7 @@ class OrganizationValidationController extends ControllerBase
       $check_organisation_url = \Drupal::service('url_generator')->generateFromRoute(
         'organization_validation.check_organisation',
         [],
-        ['absolute' => true]
+        ['absolute' => true],
       );
 
       \Drupal::logger('organization_validation')->debug('Before sending ownership_approved emai');
@@ -457,7 +457,7 @@ class OrganizationValidationController extends ControllerBase
         \Drupal::languageManager()->getDefaultLanguage()->getId(), // Language code
         $paramsUser,                    // Email parameters
         null,                       // Send from default site email
-        true                        // Enable HTML emails
+        true,                        // Enable HTML emails
       );
 
       foreach ($all_owners as $owner) {
@@ -475,7 +475,7 @@ class OrganizationValidationController extends ControllerBase
             \Drupal::languageManager()->getDefaultLanguage()->getId(),
             $paramsOwners,
             null,
-            true
+            true,
           );
         }
       }
@@ -490,10 +490,10 @@ class OrganizationValidationController extends ControllerBase
       \Drupal::logger('organization_validation')->notice(
         'User @user has been approved as an owner of Organisation @organisation by @approver.',
         [
-         '@user' => $user->getDisplayName(),
-         '@organisation' => $organisation->getTitle(),
-         '@approver' => $current_user_entity->getDisplayName(),
-        ]
+          '@user' => $user->getDisplayName(),
+          '@organisation' => $organisation->getTitle(),
+          '@approver' => $current_user_entity->getDisplayName(),
+        ],
       );
 
       $user->set('field_has_requested_ownership', false);
@@ -504,10 +504,10 @@ class OrganizationValidationController extends ControllerBase
 
     //return new RedirectResponse('/node/' . $organisation->id());
     return $this->redirect('organization_validation.confirmation_page', [], [
-     'query' => ['message' => $this->t(
-       'You have successfully approved the ownership request for %organisation.',
-       ['%organisation' => $organisation->getTitle()]
-     )],
+      'query' => ['message' => $this->t(
+        'You have successfully approved the ownership request for %organisation.',
+        ['%organisation' => $organisation->getTitle()],
+      )],
     ]);
   }
 
@@ -531,143 +531,143 @@ class OrganizationValidationController extends ControllerBase
   public function createOrganisation($user)
   {
     return new RedirectResponse('/node/add/organisation?field_ipsp_name=' . urlencode(
-      User::load($user)->get('field_organization_name')->value
+      User::load($user)->get('field_organization_name')->value,
     ));
   }
 }
 
 // /**
-  //  * Handles the "Yes" action for requesting ownership.
-  //  */
-  // public function requestOwnership($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+//  * Handles the "Yes" action for requesting ownership.
+//  */
+// public function requestOwnership($form, \Drupal\Core\Form\FormStateInterface $form_state) {
 
-  //     $organisation_id = $form_state->getTriggeringElement()['#attributes']['data-organisation'];
-  //     $user_id = $form_state->getTriggeringElement()['#attributes']['data-user'];
+//     $organisation_id = $form_state->getTriggeringElement()['#attributes']['data-organisation'];
+//     $user_id = $form_state->getTriggeringElement()['#attributes']['data-user'];
 
-  //     $organisation = Node::load($organisation_id);
-  //     $user = User::load($user_id);
+//     $organisation = Node::load($organisation_id);
+//     $user = User::load($user_id);
 
-  //     if (!$organisation || !$user) {
-  //         \Drupal::logger('organization_validation')->error('Ownership request failed: Organisation or User not found.');
-  //         return;
-  //     }
+//     if (!$organisation || !$user) {
+//         \Drupal::logger('organization_validation')->error('Ownership request failed: Organisation or User not found.');
+//         return;
+//     }
 
-  //     OrganizationValidationHelper::sendOwnershipRequest($organisation, $user);
+//     OrganizationValidationHelper::sendOwnershipRequest($organisation, $user);
 
-  //     $form_state->setRedirect('organization_validation.confirmation_page', [], [
-  //         'query' => ['message' => $this->t('Your request for ownership has been sent to the organisation owners.')],
-  //     ]);
-  //     // \Drupal::messenger()->addStatus($this->t('Your request for ownership has been sent to the organisation owners.'));
-  //     // $form_state->setRedirect('user.page');
-  // }
+//     $form_state->setRedirect('organization_validation.confirmation_page', [], [
+//         'query' => ['message' => $this->t('Your request for ownership has been sent to the organisation owners.')],
+//     ]);
+//     // \Drupal::messenger()->addStatus($this->t('Your request for ownership has been sent to the organisation owners.'));
+//     // $form_state->setRedirect('user.page');
+// }
 
 /**
   * Verifies the organisational email for a user.
   */
-  // public function verifyOrgEmail($uid, $timestamp, $hash) {
-  //     // Load the user.
-  //     $account = User::load($uid);
-  //     if (!$account) {
-  //         \Drupal::logger('organization_validation')->error('Invalid user ID for organisation email confirmation: @uid', ['@uid' => $uid]);
-  //         return ['#markup' => $this->t('Invalid confirmation link.')];
-  //     }
+// public function verifyOrgEmail($uid, $timestamp, $hash) {
+//     // Load the user.
+//     $account = User::load($uid);
+//     if (!$account) {
+//         \Drupal::logger('organization_validation')->error('Invalid user ID for organisation email confirmation: @uid', ['@uid' => $uid]);
+//         return ['#markup' => $this->t('Invalid confirmation link.')];
+//     }
 
-  //     // Validate the hash.
-  //     if (!user_pass_rehash($account, $timestamp) === $hash) {
-  //         \Drupal::logger('organization_validation')->error('Invalid hash for organisation email confirmation for user: @uid', ['@uid' => $uid]);
-  //         return ['#markup' => $this->t('Invalid confirmation link.')];
-  //     }
+//     // Validate the hash.
+//     if (!user_pass_rehash($account, $timestamp) === $hash) {
+//         \Drupal::logger('organization_validation')->error('Invalid hash for organisation email confirmation for user: @uid', ['@uid' => $uid]);
+//         return ['#markup' => $this->t('Invalid confirmation link.')];
+//     }
 
-  //     // ✅ Mark the organisational email as verified.
-  //     $account->set('field_org_email_verified', 1);
-  //     $account->save();
+//     // ✅ Mark the organisational email as verified.
+//     $account->set('field_org_email_verified', 1);
+//     $account->save();
 
-  //     // ✅ Send notification email to all admins.
-  //     $this->notifyAdmins($account);
+//     // ✅ Send notification email to all admins.
+//     $this->notifyAdmins($account);
 
-  //     // ✅ Redirect to a confirmation page.
-  //     // \Drupal::messenger()->addStatus($this->t('Your organisational email has been confirmed. An admin has been notified for review.'));
-  //     // return new RedirectResponse('/user/' . $uid . '/edit');
-  //     return $this->redirect('organization_validation.confirmation_page', [], [
-  //         'query' => ['message' => $this->t('Your organisational email has been confirmed. An admin has been notified for review.')],
-  //     ])->send();
-  // }
+//     // ✅ Redirect to a confirmation page.
+//     // \Drupal::messenger()->addStatus($this->t('Your organisational email has been confirmed. An admin has been notified for review.'));
+//     // return new RedirectResponse('/user/' . $uid . '/edit');
+//     return $this->redirect('organization_validation.confirmation_page', [], [
+//         'query' => ['message' => $this->t('Your organisational email has been confirmed. An admin has been notified for review.')],
+//     ])->send();
+// }
 
-  /**
-  * Displays the admin verification page for a user.
-  */
-  // public function adminVerifyUser(User $user) {
-  //     if (!$user) {
-  //         return ['#markup' => $this->t('User not found.')];
-  //     }
+/**
+* Displays the admin verification page for a user.
+*/
+// public function adminVerifyUser(User $user) {
+//     if (!$user) {
+//         return ['#markup' => $this->t('User not found.')];
+//     }
 
-  //     // ✅ Get user details
-  //     $user_details = [
-  //         'Full Name' => $user->getDisplayName(),
-  //         'Email' => $user->getEmail(),
-  //         'Organisational Email' => $user->get('field_organisational_email')->value ?? 'Not provided',
-  //         'Organisation Name' => $user->get('field_organization_name')->value ?? 'Not provided',
-  //         'Verified' => $user->get('field_is_verified')->value ? $this->t('Yes') : $this->t('No'),
-  //     ];
+//     // ✅ Get user details
+//     $user_details = [
+//         'Full Name' => $user->getDisplayName(),
+//         'Email' => $user->getEmail(),
+//         'Organisational Email' => $user->get('field_organisational_email')->value ?? 'Not provided',
+//         'Organisation Name' => $user->get('field_organization_name')->value ?? 'Not provided',
+//         'Verified' => $user->get('field_is_verified')->value ? $this->t('Yes') : $this->t('No'),
+//     ];
 
-  //     // ✅ Check if the user matches an existing organisation
-  //     $organisation_name = $user->get('field_organization_name')->value ?? '';
-  //     $organisation_email = $user->get('field_organisational_email')->value ?? '';
-  //     // $organisation = OrganizationValidationHelper::findMatchingOrganisation($organisation_name, $organisation_email);
-  //     $organisations = OrganizationValidationHelper::findMatchingOrganisations($user);
+//     // ✅ Check if the user matches an existing organisation
+//     $organisation_name = $user->get('field_organization_name')->value ?? '';
+//     $organisation_email = $user->get('field_organisational_email')->value ?? '';
+//     // $organisation = OrganizationValidationHelper::findMatchingOrganisation($organisation_name, $organisation_email);
+//     $organisations = OrganizationValidationHelper::findMatchingOrganisations($user);
 
-  //     if (!$organisation) {
-  //         $organisation_details = ['Message' => $this->t('No matching organisation found.')];
-  //     } else {
-  //         // ✅ Fetch additional organisation details
-  //         $organisation_details = [
-  //             'Title' => $organisation->getTitle(),
-  //             'Country' => $organisation->get('field_country')->value ?? 'Unknown',
-  //             'Website' => $organisation->get('field_ipsp_website_url')->value ?? 'Not available',
-  //             'Contact Email' => $organisation->get('field_ipsp_contact_email')->value ?? 'Not available',
-  //         ];
+//     if (!$organisation) {
+//         $organisation_details = ['Message' => $this->t('No matching organisation found.')];
+//     } else {
+//         // ✅ Fetch additional organisation details
+//         $organisation_details = [
+//             'Title' => $organisation->getTitle(),
+//             'Country' => $organisation->get('field_country')->value ?? 'Unknown',
+//             'Website' => $organisation->get('field_ipsp_website_url')->value ?? 'Not available',
+//             'Contact Email' => $organisation->get('field_ipsp_contact_email')->value ?? 'Not available',
+//         ];
 
-  //         // ✅ Fetch organisation owners
-  //         $organisation_owners = [];
-  //         $owners = $organisation->get('field_organisation_owners')->getValue();
-  //         if (!empty($owners)) {
-  //             foreach ($owners as $owner) {
-  //                 $owner_user = User::load($owner['target_id']);
-  //                 if ($owner_user) {
-  //                     $organisation_owners[] = $owner_user->getDisplayName() . ' (' . $owner_user->getEmail() . ')';
-  //                 }
-  //             }
-  //         } else {
-  //             $organisation_owners[] = $this->t('No owners assigned.');
-  //         }
+//         // ✅ Fetch organisation owners
+//         $organisation_owners = [];
+//         $owners = $organisation->get('field_organisation_owners')->getValue();
+//         if (!empty($owners)) {
+//             foreach ($owners as $owner) {
+//                 $owner_user = User::load($owner['target_id']);
+//                 if ($owner_user) {
+//                     $organisation_owners[] = $owner_user->getDisplayName() . ' (' . $owner_user->getEmail() . ')';
+//                 }
+//             }
+//         } else {
+//             $organisation_owners[] = $this->t('No owners assigned.');
+//         }
 
-  //         $organisation_details['Owners'] = implode(', ', $organisation_owners);
-  //     }
+//         $organisation_details['Owners'] = implode(', ', $organisation_owners);
+//     }
 
-  //     // ✅ Render the admin verification page
-  //     return [
-  //         '#title' => $this->t('Admin User Verification'),
-  //         '#type' => 'container',
-  //         'user_info' => [
-  //             '#markup' => '<h3>' . $this->t('User Details') . '</h3>',
-  //         ],
-  //         'user_details' => [
-  //             '#theme' => 'item_list',
-  //             '#items' => array_map(function ($label, $value) {
-  //                 return Markup::create("<strong>$label:</strong> $value");
-  //             }, array_keys($user_details), $user_details),
-  //             '#type' => 'ul',
-  //         ],
-  //         'organisation_info' => [
-  //             '#markup' => '<h3>' . $this->t('Organisation Details') . '</h3>',
-  //         ],
-  //         'organisation_details' => [
-  //             '#theme' => 'item_list',
-  //             '#items' => array_map(function ($label, $value) {
-  //                 return Markup::create("<strong>$label:</strong> $value");
-  //             }, array_keys($organisation_details), $organisation_details),
-  //             '#type' => 'ul',
-  //         ],
-  //         'verification_form' => \Drupal::formBuilder()->getForm('\Drupal\organization_validation\Form\VerifyUserForm', $user->id()),
-  //     ];
-  // }
+//     // ✅ Render the admin verification page
+//     return [
+//         '#title' => $this->t('Admin User Verification'),
+//         '#type' => 'container',
+//         'user_info' => [
+//             '#markup' => '<h3>' . $this->t('User Details') . '</h3>',
+//         ],
+//         'user_details' => [
+//             '#theme' => 'item_list',
+//             '#items' => array_map(function ($label, $value) {
+//                 return Markup::create("<strong>$label:</strong> $value");
+//             }, array_keys($user_details), $user_details),
+//             '#type' => 'ul',
+//         ],
+//         'organisation_info' => [
+//             '#markup' => '<h3>' . $this->t('Organisation Details') . '</h3>',
+//         ],
+//         'organisation_details' => [
+//             '#theme' => 'item_list',
+//             '#items' => array_map(function ($label, $value) {
+//                 return Markup::create("<strong>$label:</strong> $value");
+//             }, array_keys($organisation_details), $organisation_details),
+//             '#type' => 'ul',
+//         ],
+//         'verification_form' => \Drupal::formBuilder()->getForm('\Drupal\organization_validation\Form\VerifyUserForm', $user->id()),
+//     ];
+// }
