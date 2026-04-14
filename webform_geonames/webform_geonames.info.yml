@@ -4,6 +4,7 @@ type: module
 description: 'Integrates Geonames API with Drupal webform.'
 core_version_requirement: ^9 || ^10
 package: Custom
+version: '1.0.0'
 dependencies:
   - drupal:webform
 ...

@@ -3,5 +3,6 @@ type: module
 description: 'Automatically generates a protected email address field.'
 core_version_requirement: ^10
 package: Custom
+version: '1.0.0'
 dependencies:
   - drupal:node
