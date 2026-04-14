@@ -1,0 +1,12 @@
+{
+  "standard": {
+    "globals": [
+      "jQuery",
+      "Drupal",
+      "once",
+      "$",
+      "alert",
+      "MutationObserver"
+    ]
+  }
+}
