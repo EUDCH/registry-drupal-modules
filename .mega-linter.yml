@@ -42,3 +42,5 @@ PHP_PHPCS_ARGUMENTS:
 PHP_PHPCS_CLI_EXECUTABLE:
   - "/github/workspace/vendor/bin/phpcs"
 PHP_PHPCS_DISABLE_ERRORS: true
+
+REPOSITORY_KINGFISHER_ARGUMENTS: "--exclude core/ --exclude vendor/"
