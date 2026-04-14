@@ -1,99 +1,98 @@
 .confirmation-message {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;  /* Move to the top */
-    height: auto;  /* Remove height restriction */
-    padding-top: 40px;  /* Add padding to push it down slightly */
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Move to the top */
+  height: auto; /* Remove height restriction */
+  padding-top: 40px; /* Add padding to push it down slightly */
+  text-align: center;
 }
 
 .message-box {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+  max-width: 500px;
 }
 
 .message-box h2 {
-    font-size: 24px;
-    color: #333;
+  font-size: 24px;
+  color: #333;
 }
 
 .message-box p {
-    font-size: 18px;
-    margin: 20px 0;
+  font-size: 18px;
+  margin: 20px 0;
 }
 
 .button {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #007bff;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
+  display: inline-block;
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
 }
 
 .button:hover {
-    background: #0056b3;
+  background: #0056b3;
 }
 
-/**
-*/
 /* Organisation Table */
 .organisation-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    color: #333;
-    font-family: Arial, sans-serif;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  color: #333;
+  font-family: Arial, sans-serif;
 }
 
 /* Borders for all cells */
-.organisation-table th, .organisation-table td {
-    padding: 12px;
-    border: 1px solid #000;
-    text-align: left;
+.organisation-table th,
+.organisation-table td {
+  padding: 12px;
+  border: 1px solid #000;
+  text-align: left;
 }
 
 /* Style table header */
 .organisation-table th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    position: relative;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  position: relative;
 }
 
 /* Button inside header */
 .create-org-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 6px 10px;
-    font-size: 14px;
-    background-color: #28a745;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  font-size: 14px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
 }
 
 .create-org-button:hover {
-    background-color: #218838;
+  background-color: #218838;
 }
 
 /* Alternating row background */
 .organisation-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .organisation-table tr:hover {
-    background-color: #d0e7ff;
+  background-color: #d0e7ff;
 }
 
 .table-header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
