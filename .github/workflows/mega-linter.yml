@@ -54,7 +54,6 @@ jobs:
           # XXX: temporarilly check all codebase
           VALIDATE_ALL_CODEBASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DISABLE_LINTERS: REPOSITORY_DEVSKIM
 
       # Upload MegaLinter artifacts
       - name: Archive production artifacts
