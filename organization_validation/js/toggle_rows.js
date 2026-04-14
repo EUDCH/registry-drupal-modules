@@ -15,6 +15,7 @@
 })(jQuery, Drupal, once);
 
 // ✅ Function to send selected organisation to OrganizationValidationController
+// eslint-disable-next-line no-unused-vars
 function submitSelectedOrganisation() {
     console.log("test");
     let selectedRadio = $('input[name="selected_organisation"]:checked');
