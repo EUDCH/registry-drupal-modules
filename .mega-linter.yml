@@ -14,5 +14,9 @@ PHP_PHPSTAN_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress
     cwd: workspace
 
+PHP_PHPCS_PRE_COMMANDS:
+  - command: composer install --no-interaction --no-progress
+    cwd: workspace
+
 PHP_PHPCS_COMMAND_REMOVE_ARGUMENTS: "--standard=/action/lib/.automation/phpcs.xml"
 PHP_PHPCS_ARGUMENTS: "--standard=Drupal,DrupalPractice"
