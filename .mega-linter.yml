@@ -23,6 +23,8 @@ ADDITIONAL_EXCLUDED_DIRECTORIES:
   - vendor/
   - core/
 
+REPORT_OUTPUT_FOLDER: none
+
 PHP_PHPSTAN_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress --ignore-platform-reqs
     cwd: workspace
