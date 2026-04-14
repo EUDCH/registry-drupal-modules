@@ -42,4 +42,6 @@ PHP_PHPCS_DISABLE_ERRORS: true
 
 REPOSITORY_CHECKOV_ARGUMENTS: "--skip-path 'vendor/*'"
 
+REPOSITORY_KICS_ARGUMENTS: "--exclude-paths core/ --exclude-paths vendor/"
+
 REPOSITORY_KINGFISHER_ARGUMENTS: "--exclude core/ --exclude vendor/"
