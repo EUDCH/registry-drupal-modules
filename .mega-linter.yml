@@ -22,19 +22,16 @@ ADDITIONAL_EXCLUDED_DIRECTORIES:
   - vendor/
   - core/
 
-REPOSITORY_CHECKOV_ARGUMENTS: "--skip-path 'vendor/*'"
-
 PHP_PHPSTAN_PRE_COMMANDS:
-  - command: composer install --no-interaction --no-progress --ignore-platform-reqs
-    cwd: workspace
-
-PHP_PHPCS_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress --ignore-platform-reqs
     cwd: workspace
 PHP_PHPSTAN_CLI_EXECUTABLE:
   - "/github/workspace/vendor/bin/phpstan"
 PHP_PHPSTAN_DISABLE_ERRORS: true
 
+PHP_PHPCS_PRE_COMMANDS:
+  - command: composer install --no-interaction --no-progress --ignore-platform-reqs
+    cwd: workspace
 PHP_PHPCS_COMMAND_REMOVE_ARGUMENTS: "--standard=/action/lib/.automation/phpcs.xml"
 PHP_PHPCS_ARGUMENTS:
   - "--standard=Drupal,DrupalPractice"
@@ -42,5 +39,7 @@ PHP_PHPCS_ARGUMENTS:
 PHP_PHPCS_CLI_EXECUTABLE:
   - "/github/workspace/vendor/bin/phpcs"
 PHP_PHPCS_DISABLE_ERRORS: true
+
+REPOSITORY_CHECKOV_ARGUMENTS: "--skip-path 'vendor/*'"
 
 REPOSITORY_KINGFISHER_ARGUMENTS: "--exclude core/ --exclude vendor/"
