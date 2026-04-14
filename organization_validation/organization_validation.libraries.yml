@@ -1,3 +1,4 @@
+---
 confirmation_styles:
   css:
     theme:
@@ -13,7 +14,3 @@ toggle_rows:
     - core/drupal
     - core/once
     - core/jquery
-
-
-
-

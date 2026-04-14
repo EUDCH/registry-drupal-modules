@@ -1,7 +1,9 @@
+---
 organization_listing.organization_page:
-  path: '/organizations'
+  path: "/organizations"
   defaults:
     _controller: '\Drupal\organization_listing\Controller\OrganizationListingController::listOrganizations'
-    _title: 'Organizations'
+    _title: "Organizations"
   requirements:
-    _permission: 'access content'
+    _permission: "access content"
+

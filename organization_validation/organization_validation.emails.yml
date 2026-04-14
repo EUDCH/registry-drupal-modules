@@ -1,3 +1,4 @@
+---
 # 📩 1. Verify Organisation Email (User Confirmation)
 # verify_org_email:
 #   subject: "Please confirm your organisational email"

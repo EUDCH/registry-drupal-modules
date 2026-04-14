@@ -1,3 +1,4 @@
+---
 # organization_validation.thank_you_page:
 #   path: '/organization-validation/thank-you'
 #   defaults:
@@ -31,28 +32,28 @@
 #     uid: \d+ # Ensure uid is numeric
 
 organization_validation.check_organisation:
-  path: '/check-organisation'
+  path: "/check-organisation"
   defaults:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::checkOrganisation'
-    _title: 'Organisation Registry'
+    _title: "Organisation Registry"
   requirements:
-    _permission: 'access content'
+    _permission: "access content"
 
 organization_validation.confirm_organisation:
-  path: '/confirm-organisation/{organisation}/{user}'
+  path: "/confirm-organisation/{organisation}/{user}"
   defaults:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::confirmOrganisation'
-    _title: 'Confirm Organisation'
+    _title: "Confirm Organisation"
   requirements:
-    _permission: 'access content'
+    _permission: "access content"
 
 organization_validation.create_organisation:
-  path: '/create-organisation/{user}'
+  path: "/create-organisation/{user}"
   defaults:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::createOrganisation'
-    _title: 'Create Organisation'
+    _title: "Create Organisation"
   requirements:
-    _permission: 'access content'
+    _permission: "access content"
 
 # organization_validation.verify_org_email:
 #   path: '/verify-organisation-email/{uid}/{timestamp}/{hash}'
@@ -66,21 +67,21 @@ organization_validation.create_organisation:
 #     hash: '.+'
 
 organization_validation.approve_ownership:
-  path: '/approve-ownership/{organisation}/{user}'
+  path: "/approve-ownership/{organisation}/{user}"
   defaults:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::approveOwnership'
-    _title: 'Approve Ownership Request'
+    _title: "Approve Ownership Request"
   requirements:
-    _permission: 'access content'
+    _permission: "access content"
     #_user_is_logged_in: 'TRUE'  # Only allow logged-in users
 
 organization_validation.confirmation_page:
-  path: '/organization-validation/confirmation'
+  path: "/organization-validation/confirmation"
   defaults:
     _controller: '\Drupal\organization_validation\Controller\ConfirmationController::confirmationPage'
-    _title: 'Confirmation'
+    _title: "Confirmation"
   requirements:
-    _permission: 'access content'
+    _permission: "access content"
 
 # organization_validation.admin_verify_user:
 #   path: '/admin/verify-user/{user}'
@@ -94,10 +95,10 @@ organization_validation.confirmation_page:
 #       user:
 #         type: entity:user
 organization_validation.submit:
-  path: '/organization-validation/manageSelectedOrganisations'
+  path: "/organization-validation/manageSelectedOrganisations"
   defaults:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::manageSelectedOrganisation'
-    _title: 'Manage Selected Organisation'
+    _title: "Manage Selected Organisation"
   requirements:
-    _permission: 'access content'
-  methods: ['POST']
+    _permission: "access content"
+  methods: ["POST"]
