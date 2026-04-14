@@ -2,6 +2,8 @@
 
 namespace Drupal\organization_validation\Controller;
 
+use Drupal\Core\Url;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\user\Entity\User;
@@ -17,7 +19,7 @@ class VerifyOrganizationController extends ControllerBase {
   public function verify($user) {
     $user = User::load($user);
     if (!$user) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('User not found.');
+      throw new NotFoundHttpException('User not found.');
     }
 
     $organization_name = $user->get('field_organization_name')->value;
@@ -32,18 +34,20 @@ class VerifyOrganizationController extends ControllerBase {
     $query = \Drupal::entityQuery('node')
       ->condition('type', 'organization')
       ->condition('title', $organization_name)
-      ->accessCheck(FALSE) // ✅ Prevents QueryException error
+    // ✅ Prevents QueryException error
+      ->accessCheck(FALSE)
       ->range(0, 1);
     $result = $query->execute();
 
     if (!empty($result)) {
       // Organization exists; redirect to its page.
       $organization_id = reset($result);
-      return new RedirectResponse(\Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $organization_id));
+      return new RedirectResponse(\Drupal::service('path.alias_manager')
+        ->getAliasByPath('/node/' . $organization_id));
     }
     else {
       // Organization does not exist; redirect to the add form with prefilled data.
-      $url = \Drupal\Core\Url::fromRoute('node.add', [
+      $url = Url::fromRoute('node.add', [
         'node_type' => 'organizations',
       ], [
         'query' => [
@@ -53,4 +57,5 @@ class VerifyOrganizationController extends ControllerBase {
       return new RedirectResponse($url->toString());
     }
   }
+
 }

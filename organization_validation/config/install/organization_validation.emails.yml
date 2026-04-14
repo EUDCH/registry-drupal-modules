@@ -1,3 +1,4 @@
+---
 # 📩 1. Verify Organisation Email (User Confirmation)
 verify_org_email:
   subject: "Please confirm your organisational email"
@@ -16,7 +17,7 @@ admin_notification:
   body: |
     A new user has confirmed their organisational email and is awaiting admin review.
 
-    **User:** [user_name]  
+    **User:** [user_name]
     **Email:** [user_email]
 
     Click the link below to review the user:
@@ -43,7 +44,7 @@ ownership_request:
   body: |
     Dear [owner_name],
 
-    [user_name] has requested ownership of [organisation_name].  
+    [user_name] has requested ownership of [organisation_name].
 
     To approve or reject the request, please visit the following link:
 
@@ -55,7 +56,7 @@ ownership_request:
 ownership_approved:
   subject: "Your Ownership Request Has Been Approved"
   body: |
-    Congratulations! You have been approved as an owner of [organisation_name].  
+    Congratulations! You have been approved as an owner of [organisation_name].
 
     You can now manage the organisation profile using the link below:
 

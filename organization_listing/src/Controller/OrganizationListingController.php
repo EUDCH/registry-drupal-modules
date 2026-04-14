@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Controller for listing published organizations.
  */
-class organizationListingController extends ControllerBase {
+class OrganizationListingController extends ControllerBase {
 
   /**
    * List published organizations with search and filter functionality.
@@ -108,4 +108,5 @@ class organizationListingController extends ControllerBase {
 
     return $build;
   }
+
 }

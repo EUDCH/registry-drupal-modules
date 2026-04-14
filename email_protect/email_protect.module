@@ -1,19 +1,24 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Implements the computed field for the "Protected Email" field.
  */
 function computed_field_field_protected_email_compute($entity_type_manager, $entity, $fields, $delta) {
   // Ensure we're dealing with the "Organisation" content type and the right field.
   if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'organisation') {
-    
+
     // Get the value of the original email field.
     $email = $entity->get('field_ipsp_contact_email')->value;
 
-    // Check if the email is not empty and replace '@' with '(at)'
+    // Check if the email is not empty and replace '@' with '(at)'.
     if (!empty($email)) {
       $protected_email = str_replace('@', '(at)', $email);
-      return $protected_email;  // Return the modified email.
+      // Return the modified email.
+      return $protected_email;
     }
   }
 
