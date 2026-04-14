@@ -2,6 +2,14 @@
 
 All notable changes to this repository are documented here.
 
+## [Unreleased] – Per-module semver versioning
+
+### Changed
+
+- chore: add `version` field to all module `.info.yml` files, enabling independent per-module semver.
+  - `organization_validation`: `1.1.0` (reflects two post-import changes)
+  - All other modules: `1.0.0` (unchanged since initial import)
+
 ## [1.1.0] – Update mail templates
 
 ### Changed
