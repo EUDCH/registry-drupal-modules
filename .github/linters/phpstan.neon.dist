@@ -1,0 +1,9 @@
+parameters:
+  level: 1
+  paths:
+    - computed_address
+    - email_protect
+    - org_moderation_sync
+    - organization_listing
+    - organization_validation
+    - webform_geonames
