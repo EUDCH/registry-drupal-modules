@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function debounce(func, delay) {
     return function (...args) {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func(...args), delay); // DevSkim: reviewed DS172411 on 2026-04-14
+      debounceTimer = setTimeout(() => func(...args), delay);
     };
   }
 
