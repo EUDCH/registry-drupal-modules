@@ -27,4 +27,4 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       - name: Run phpcs
-        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme .
+        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore=vendor/,core/ .
