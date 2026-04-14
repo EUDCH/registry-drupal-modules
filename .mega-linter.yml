@@ -21,11 +21,11 @@ DISABLE_LINTERS:
 REPOSITORY_CHECKOV_ARGUMENTS: "--skip-path 'vendor/*'"
 
 PHP_PHPSTAN_PRE_COMMANDS:
-  - command: composer install --no-interaction --no-progress --ignore-platform-req
+  - command: composer install --no-interaction --no-progress --ignore-platform-req=ext-gd
     cwd: workspace
 
 PHP_PHPCS_PRE_COMMANDS:
-  - command: composer install --no-interaction --no-progress --ignore-platform-req
+  - command: composer install --no-interaction --no-progress --ignore-platform-req=ext-gd
     cwd: workspace
 PHP_PHPSTAN_CLI_EXECUTABLE: "/vendor/bin/phpstan"
 PHP_PHPSTAN_DISABLE_ERRORS: true
