@@ -1,8 +1,9 @@
-name: 'Computed Address'
+---
+name: "Computed Address"
 type: module
-description: 'Computes a formatted address from city and country.'
+description: "Computes a formatted address from city and country."
 core_version_requirement: ^9 || ^10
-package: 'Custom'
-version: '1.0.0'
+package: "Custom"
+version: "1.0.0"
 dependencies:
   - drupal:computed_field

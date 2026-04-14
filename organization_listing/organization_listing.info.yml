@@ -1,8 +1,10 @@
-name: 'Organization Listing'
+---
+name: "Organization Listing"
 type: module
-description: 'Provides a page to list and filter published organizations.'
+description: "Provides a page to list and filter published organizations."
 core_version_requirement: ^9 || ^10
 package: Custom
-version: '1.0.0'
+version: "1.0.0"
 dependencies:
   - drupal:views
+
