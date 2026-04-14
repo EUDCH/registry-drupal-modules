@@ -29,7 +29,7 @@
     "CKEditor5": true,
     "tabbable": true,
     "transliterate": true,
-    "bodyScrollLock" : true,
+    "bodyScrollLock": true,
     "FloatingUIDOM": true
   },
   "rules": {
@@ -38,20 +38,30 @@
     "no-underscore-dangle": ["off"],
     "max-nested-callbacks": ["warn", 3],
     "import/no-mutable-exports": ["warn"],
-    "no-plusplus": ["warn", {
-      "allowForLoopAfterthoughts": true
-    }],
+    "no-plusplus": [
+      "warn",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
     "no-param-reassign": ["off"],
     "no-prototype-builtins": ["off"],
-    "valid-jsdoc": ["warn", {
-      "prefer": {
-        "returns": "return",
-        "property": "prop"
-      },
-      "requireReturn": false
-    }],
+    "valid-jsdoc": [
+      "warn",
+      {
+        "prefer": {
+          "returns": "return",
+          "property": "prop"
+        },
+        "requireReturn": false
+      }
+    ],
     "no-unused-vars": ["warn"],
-    "operator-linebreak": ["error", "after", { "overrides": { "?": "ignore", ":": "ignore" } }],
+    "operator-linebreak": [
+      "error",
+      "after",
+      { "overrides": { "?": "ignore", ":": "ignore" } }
+    ],
     "yml/indent": ["error", 2]
   }
 }
