@@ -1,0 +1,15 @@
+{
+    "name": "eudch/registry-drupal-modules",
+    "description": "Custom Drupal modules for EDCH",
+    "type": "project",
+    "require-dev": {
+        "mglaman/phpstan-drupal": "^1.3",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan": "^1.10"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}

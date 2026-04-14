@@ -1,0 +1,5 @@
+DISABLE: COPYPASTE,SPELL
+
+PHP_PHPSTAN_PRE_COMMANDS:
+  - command: composer install --no-interaction --no-progress
+    cwd: workspace
