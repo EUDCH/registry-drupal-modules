@@ -4,6 +4,7 @@
   "type": "project",
   "require-dev": {
     "composer/installers": "^1.9 || ^2",
+    "drupal/coder": "^9.0",
     "drupal/core-recommended": "^10",
     "drush/drush": "^10",
     "phpstan/extension-installer": "^1.4.3",
