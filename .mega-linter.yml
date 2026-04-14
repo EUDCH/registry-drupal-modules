@@ -1,0 +1,44 @@
+---
+ENABLE:
+  - ACTION
+  - CSS
+  - JAVASCRIPT
+  - JSON
+  - MARKDOWN
+  - PHP
+  - REPOSITORY
+  - YAML
+
+DISABLE:
+  - COPYPASTE
+  - SPELL
+
+DISABLE_LINTERS:
+  - JSON_NPM_PACKAGE_JSON_LINT
+  - PHP_PSALM
+  - REPOSITORY_DEVSKIM
+
+ADDITIONAL_EXCLUDED_DIRECTORIES:
+  - vendor/
+  - core/
+
+REPOSITORY_CHECKOV_ARGUMENTS: "--skip-path 'vendor/*'"
+
+PHP_PHPSTAN_PRE_COMMANDS:
+  - command: composer install --no-interaction --no-progress --ignore-platform-reqs
+    cwd: workspace
+
+PHP_PHPCS_PRE_COMMANDS:
+  - command: composer install --no-interaction --no-progress --ignore-platform-reqs
+    cwd: workspace
+PHP_PHPSTAN_CLI_EXECUTABLE:
+  - "/github/workspace/vendor/bin/phpstan"
+PHP_PHPSTAN_DISABLE_ERRORS: true
+
+PHP_PHPCS_COMMAND_REMOVE_ARGUMENTS: "--standard=/action/lib/.automation/phpcs.xml"
+PHP_PHPCS_ARGUMENTS:
+  - "--standard=Drupal,DrupalPractice"
+  - "--ignore=vendor/,core/"
+PHP_PHPCS_CLI_EXECUTABLE:
+  - "/github/workspace/vendor/bin/phpcs"
+PHP_PHPCS_DISABLE_ERRORS: true
