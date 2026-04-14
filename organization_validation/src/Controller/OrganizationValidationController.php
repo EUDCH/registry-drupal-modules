@@ -17,9 +17,10 @@ use Drupal\Component\Serialization\Json;
 /**
  * Controller for checking organisation after verification.
  */
-class OrganizationValidationController extends ControllerBase {
-
-    public function checkOrganisation() {
+class OrganizationValidationController extends ControllerBase
+{
+    public function checkOrganisation()
+    {
         $current_user = \Drupal::currentUser();
 
         if ($current_user->isAnonymous()) {
@@ -37,7 +38,8 @@ class OrganizationValidationController extends ControllerBase {
         // ✅ Extract user details
         $email = $account->getEmail();
         $country = $account->get('field_organisation_country')->value ?? 'Unknown';
-        $country_label = $account->get('field_organisation_country')->getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
+        $country_label = $account->get('field_organisation_country')->
+           getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
         $web_address = $account->get('field_org_web_address')->value ?? 'N/A';
         $org_name = $account->get('field_organization_name')->value ?? 'N/A';
 
@@ -64,11 +66,12 @@ class OrganizationValidationController extends ControllerBase {
         $query = \Drupal::entityQuery('node')
             ->condition('type', 'organisation')
             ->condition('field_organisation_owners', $account->id(), 'IN')
-            ->accessCheck(TRUE);
+            ->accessCheck(true);
 
         $owned_organisation_ids = $query->execute();
         $own_organisation = !empty($owned_organisation_ids) ? Node::load(reset($owned_organisation_ids)) : null;
-        $matching_organisations = !$own_organisation ? OrganizationValidationHelper::findMatchingOrganisations($account) : [];
+        $matching_organisations = !$own_organisation ?
+          OrganizationValidationHelper::findMatchingOrganisations($account) : [];
 
         $organisation_actions_section = [
             '#type' => 'container',
@@ -81,7 +84,7 @@ class OrganizationValidationController extends ControllerBase {
             '#title' => $this->t('Create organisation'),
             '#url' => \Drupal\Core\Url::fromUserInput('/form/organisation-registry'),
             '#attributes' => [
-                'class' => ['button', 'button--primary'], 
+                'class' => ['button', 'button--primary'],
                 'style' => 'float: right; margin-bottom: 10px;'
             ],
         ];
@@ -89,7 +92,7 @@ class OrganizationValidationController extends ControllerBase {
         if ($own_organisation) {
             $organisation_title = $own_organisation->getTitle();
             $organisation_country = $own_organisation->get('field_country')->value ?? 'Unknown';
-            $organisation_submission_id = $own_organisation->get('field_submission_id')->value ?? NULL;
+            $organisation_submission_id = $own_organisation->get('field_submission_id')->value ?? null;
 
             $organisation_actions_section['content'] = [
                 '#markup' => "
@@ -100,31 +103,34 @@ class OrganizationValidationController extends ControllerBase {
                 ",
             ];
 
-            $edit_url = \Drupal\Core\Url::fromUserInput("/webform/organisation_registry/submissions/{$organisation_submission_id}/edit");
+            $edit_url = \Drupal\Core\Url::fromUserInput(
+                "/webform/organisation_registry/submissions/{$organisation_submission_id}/edit"
+            );
             $organisation_actions_section['edit_button'] = [
                 '#type' => 'link',
                 '#title' => $this->t('Edit Organisation'),
                 '#url' => $edit_url,
                 '#attributes' => ['class' => ['button', 'button--primary']],
             ];
-        } else if ($hasRequestOwnership) {
+        } elseif ($hasRequestOwnership) {
             $organisation_actions_section['content'] = [
                 '#markup' => "
                     <p><strong>{$this->t('This organisation has already been registered by another user. They have been notified and must accept your request to manage the organisation’s profile. You will receive a notification once your request is accepted.<br><br>If you do not receive a notification within a few days, please contact the administrators at registry@edch.eu.')}</strong></p>
                 ",
             ];
-        } else if (!empty($matching_organisations)) {
+        } elseif (!empty($matching_organisations)) {
             $table_rows = [];
 
             foreach ($matching_organisations as $match) {
                 if ($match['node'] instanceof Node) {
                     $organisation = $match['node'];
-                    $name = $organisation->get('field_ipsp_name')->value ?? $organisation->get('field_ipsp_name_en')->value ?? 'N/A';
+                    $name = $organisation->get('field_ipsp_name')->value ??
+                        $organisation->get('field_ipsp_name_en')->value ?? 'N/A';
                     $email = $organisation->get('field_ipsp_contact_email')->value ?? 'N/A';
                     $website = $organisation->get('field_ipsp_website_url')->first()->getValue()['uri'] ?? 'N/A';
                     $country = $organisation->get('field_country')->value ?? 'N/A';
                     $org_type = $match['type'];
-                    
+
                     // ✅ Add the organisation as an option in the selection list
                     $organisation_options[$organisation->id()] = $name;
 
@@ -152,7 +158,8 @@ class OrganizationValidationController extends ControllerBase {
                                 $organisation->id(),
                                 $account->id()
                             ),
-                            '#attributes' => ['class' => ['button', 'button--primary'], 'style' => ['display:', 'none']],
+                            '#attributes' => ['class' => ['button', 'button--primary'],
+                               'style' => ['display:', 'none']],
                         ];
 
                         $rendered_action_button = \Drupal::service('renderer')->render($request_ownership_button);
@@ -255,7 +262,8 @@ class OrganizationValidationController extends ControllerBase {
         ];
     }
 
-    public function manageSelectedOrganisation(Request $request) {
+    public function manageSelectedOrganisation(Request $request)
+    {
         $current_user = \Drupal::currentUser();
 
         if ($current_user->isAnonymous()) {
@@ -319,7 +327,8 @@ class OrganizationValidationController extends ControllerBase {
     /**
      * Handles the "Yes" action for requesting ownership.
      */
-    public function requestOwnership($organisation_id) {
+    public function requestOwnership($organisation_id)
+    {
         $current_user = \Drupal::currentUser();
 
         if ($current_user->isAnonymous()) {
@@ -351,7 +360,8 @@ class OrganizationValidationController extends ControllerBase {
     /**
     * Approves an ownership request for an organisation.
     */
-    public function approveOwnership($organisation, $user) {
+    public function approveOwnership($organisation, $user)
+    {
         $current_user = \Drupal::currentUser();
 
         if ($current_user->isAnonymous()) {
@@ -393,13 +403,13 @@ class OrganizationValidationController extends ControllerBase {
             $check_organisation_url = \Drupal::service('url_generator')->generateFromRoute(
                 'organization_validation.check_organisation',
                 [],
-                ['absolute' => TRUE]
+                ['absolute' => true]
             );
 
             \Drupal::logger('organization_validation')->debug('Before sending ownership_approved emai');
 
             $operasAdminsUids = \Drupal::entityQuery('user')
-                ->accessCheck(FALSE)
+                ->accessCheck(false)
                 ->condition('status', 1)
                 ->condition('field_operas_admin', 1)
                 ->execute();
@@ -446,8 +456,8 @@ class OrganizationValidationController extends ControllerBase {
                 $user->getEmail(),          // Recipient email
                 \Drupal::languageManager()->getDefaultLanguage()->getId(), // Language code
                 $paramsUser,                    // Email parameters
-                NULL,                       // Send from default site email
-                TRUE                        // Enable HTML emails
+                null,                       // Send from default site email
+                true                        // Enable HTML emails
             );
 
             foreach ($all_owners as $owner) {
@@ -464,8 +474,8 @@ class OrganizationValidationController extends ControllerBase {
                         $owner->getEmail(),
                         \Drupal::languageManager()->getDefaultLanguage()->getId(),
                         $paramsOwners,
-                        NULL,
-                        TRUE
+                        null,
+                        true
                     );
                 }
             }
@@ -477,11 +487,14 @@ class OrganizationValidationController extends ControllerBase {
             ]));
 
             // ✅ Log the approval.
-            \Drupal::logger('organization_validation')->notice('User @user has been approved as an owner of Organisation @organisation by @approver.', [
-                '@user' => $user->getDisplayName(),
-                '@organisation' => $organisation->getTitle(),
-                '@approver' => $current_user_entity->getDisplayName(),
-            ]);
+            \Drupal::logger('organization_validation')->notice(
+                'User @user has been approved as an owner of Organisation @organisation by @approver.',
+                [
+                  '@user' => $user->getDisplayName(),
+                  '@organisation' => $organisation->getTitle(),
+                  '@approver' => $current_user_entity->getDisplayName(),
+                ]
+            );
 
             $user->set('field_has_requested_ownership', false);
             $user->save();
@@ -491,16 +504,19 @@ class OrganizationValidationController extends ControllerBase {
 
         //return new RedirectResponse('/node/' . $organisation->id());
         return $this->redirect('organization_validation.confirmation_page', [], [
-            'query' => ['message' => $this->t('You have successfully approved the ownership request for %organisation.', ['%organisation' => $organisation->getTitle()])],
+          'query' => ['message' => $this->t(
+              'You have successfully approved the ownership request for %organisation.',
+              ['%organisation' => $organisation->getTitle()]
+          )],
         ]);
-
     }
 
 
     /**
      * Confirms the user’s association with an existing organisation.
      */
-    public function confirmOrganisation($organisation, $user) {
+    public function confirmOrganisation($organisation, $user)
+    {
         $account = User::load($user);
         if ($account) {
             $account->set('field_organisation', $organisation);
@@ -512,30 +528,19 @@ class OrganizationValidationController extends ControllerBase {
     /**
      * Redirects the user to create a new organisation.
      */
-    public function createOrganisation($user) {
-        return new RedirectResponse('/node/add/organisation?field_ipsp_name=' . urlencode(User::load($user)->get('field_organization_name')->value));
+    public function createOrganisation($user)
+    {
+        return new RedirectResponse('/node/add/organisation?field_ipsp_name=' . urlencode(
+            User::load($user)->get('field_organization_name')->value
+        ));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // /**
     //  * Handles the "Yes" action for requesting ownership.
     //  */
     // public function requestOwnership($form, \Drupal\Core\Form\FormStateInterface $form_state) {
-        
+
     //     $organisation_id = $form_state->getTriggeringElement()['#attributes']['data-organisation'];
     //     $user_id = $form_state->getTriggeringElement()['#attributes']['data-user'];
 
@@ -587,8 +592,6 @@ class OrganizationValidationController extends ControllerBase {
     //         'query' => ['message' => $this->t('Your organisational email has been confirmed. An admin has been notified for review.')],
     //     ])->send();
     // }
-
-    
 
     /**
     * Displays the admin verification page for a user.

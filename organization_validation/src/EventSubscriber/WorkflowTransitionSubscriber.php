@@ -8,15 +8,17 @@ use Drupal\workflow\Event\WorkflowTransitionEvent;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class WorkflowTransitionSubscriber implements EventSubscriberInterface {
-
-    public static function getSubscribedEvents() {
+class WorkflowTransitionSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
         return [
         'workflow.transition' => 'onWorkflowTransition',
         ];
     }
 
-    public function onWorkflowTransition(WorkflowTransitionEvent $event) {
+    public function onWorkflowTransition(WorkflowTransitionEvent $event)
+    {
         $transition = $event->getTransition();
         $entity = $event->getEntity();
 

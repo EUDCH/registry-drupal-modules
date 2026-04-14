@@ -11,19 +11,21 @@ use Drupal\organization_validation\Helper\OrganizationValidationHelper;
 /**
  * Handles the request ownership form.
  */
-class RequestOwnershipForm extends FormBase {
-
+class RequestOwnershipForm extends FormBase
+{
     /**
      * Returns the form ID.
      */
-    public function getFormId() {
+    public function getFormId()
+    {
         return 'request_ownership_form';
     }
 
     /**
      * Builds the ownership request form.
      */
-    public function buildForm(array $form, FormStateInterface $form_state, $organisation_id = NULL, $user_id = NULL) {
+    public function buildForm(array $form, FormStateInterface $form_state, $organisation_id = null, $user_id = null)
+    {
         $form['#attributes']['class'][] = 'button-container';
 
         $form['organisation_id'] = [
@@ -48,7 +50,8 @@ class RequestOwnershipForm extends FormBase {
     /**
      * Handles form submission.
      */
-    public function submitForm(array &$form, FormStateInterface $form_state) {
+    public function submitForm(array &$form, FormStateInterface $form_state)
+    {
         $organisation_id = $form_state->getValue('organisation_id');
         $user_id = $form_state->getValue('user_id');
 
@@ -58,7 +61,9 @@ class RequestOwnershipForm extends FormBase {
 
             if ($organisation && $user) {
                 OrganizationValidationHelper::sendOwnershipRequest($organisation, $user);
-                \Drupal::messenger()->addStatus($this->t('Your request for ownership has been sent to the organisation owners.'));
+                \Drupal::messenger()->addStatus($this->t(
+                    'Your request for ownership has been sent to the organisation owners.'
+                ));
             }
         }
 

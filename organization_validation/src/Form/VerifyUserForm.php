@@ -9,19 +9,21 @@ use Drupal\user\Entity\User;
 /**
  * Provides a form for verifying a user.
  */
-class VerifyUserForm extends FormBase {
-
+class VerifyUserForm extends FormBase
+{
     /**
      * {@inheritdoc}
      */
-    public function getFormId() {
+    public function getFormId()
+    {
         return 'organization_validation_verify_user_form';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, $user_id = NULL) {
+    public function buildForm(array $form, FormStateInterface $form_state, $user_id = null)
+    {
         $user = User::load($user_id);
         if (!$user) {
             return ['#markup' => $this->t('User not found.')];
@@ -35,7 +37,7 @@ class VerifyUserForm extends FormBase {
         $form['confirmation'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Confirm this user as verified'),
-            '#required' => TRUE,
+            '#required' => true,
         ];
 
         $form['submit'] = [
@@ -50,7 +52,8 @@ class VerifyUserForm extends FormBase {
     /**
      * {@inheritdoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state) {
+    public function submitForm(array &$form, FormStateInterface $form_state)
+    {
         $user_id = $form_state->getValue('user_id');
         $user = User::load($user_id);
         if ($user) {

@@ -5,18 +5,21 @@ namespace Drupal\organization_validation\Helper;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 
-class OrganizationValidationHelper {
+class OrganizationValidationHelper
+{
     /**
      * ✅ Finds a matching organisations based on user entity
      */
-    public static function findMatchingOrganisations($user) {
+    public static function findMatchingOrganisations($user)
+    {
         if (!$user instanceof User) {
             return [];
         }
 
         $email = $user->getEmail();
         $country = $user->get('field_organisation_country')->value ?? '';
-        $country_label = $user->get('field_organisation_country')->getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
+        $country_label = $user->get('field_organisation_country')->getFieldDefinition()->
+           getSetting('allowed_values')[$country] ?? $country;
         $web_address = $user->get('field_org_web_address')->value ?? '';
         $org_name = $user->get('field_organization_name')->value ?? '';
 
@@ -34,7 +37,7 @@ class OrganizationValidationHelper {
         foreach ($types as $type) {
             $query = \Drupal::entityQuery('node')
                 ->condition('type', $type)
-                ->accessCheck(FALSE);
+                ->accessCheck(false);
 
             $or_group = $query->orConditionGroup();
 
@@ -87,7 +90,8 @@ class OrganizationValidationHelper {
     /**
      * Generates the form URL for a given organisation node.
      */
-    public static function generateFormUrl(Node $organisation): string {
+    public static function generateFormUrl(Node $organisation): string
+    {
         \Drupal::logger('custom_module')->notice('Node type: @type', ['@type' => $organisation->getType()]);
 
         if ($organisation->getType() !== 'organisations') {
@@ -107,11 +111,12 @@ class OrganizationValidationHelper {
         $parent_organisation_official_name_EN = $organisation->get('field_parent_org_name_en')->value ?? '';
         $parent_organisation_acronym = $organisation->get('field_parent_org_acronym')->value ?? '';
         $legal_entity_type = $organisation->get('field_legal_entity_type_of_the_p')->value ?? '';
-        $number_of_full_time_equivalent_FTE_paid_staff = $organisation->get('field_number_of_full_time_equiva')->value ?? '';
+        $number_of_full_time_equivalent_FTE_paid_staff = $organisation->
+           get('field_number_of_full_time_equiva')->value ?? '';
         $geographical_range_of_services = $organisation->get('field_geographical_range_of_serv')->value ?? '';
         $services_urls = $organisation->get('field_link_s_where_the_services')->value ?? '';
         $published_or_supported_output_types = $organisation->get('field_published_or_supported_out')->value ?? '';
-        
+
         $query_params = [
             'organization_name' => $organisation_name,
             'organization_name_en' => $organization_name_en,
@@ -132,8 +137,6 @@ class OrganizationValidationHelper {
             'published_or_supported_output_types' =>  $published_or_supported_output_types,
         ];
 
-        
-
         $query_string = http_build_query($query_params, '', '&', PHP_QUERY_RFC3986);
 
         \Drupal::logger('custom_module')->notice('Node type: @st', ['@st' => $query_string]);
@@ -149,7 +152,8 @@ class OrganizationValidationHelper {
     /**
     * Sends an ownership request email to the organisation's owners.
     */
-    public static function sendOwnershipRequest(Node $organisation, User $requesting_user) {
+    public static function sendOwnershipRequest(Node $organisation, User $requesting_user)
+    {
         $owner_emails = [];
 
         $owners = $organisation->get('field_organisation_owners')->getValue();
@@ -183,11 +187,11 @@ class OrganizationValidationHelper {
             $approval_link = \Drupal::service('url_generator')->generateFromRoute(
                 'organization_validation.approve_ownership',
                 ['organisation' => $organisation->id(), 'user' => $requesting_user->id()],
-                ['absolute' => TRUE]
+                ['absolute' => true]
             );
 
             $operasAdminsUids = \Drupal::entityQuery('user')
-                    ->accessCheck(FALSE)
+                    ->accessCheck(false)
                     ->condition('status', 1)
                     ->condition('field_operas_admin', 1)
                     ->execute();
@@ -213,7 +217,8 @@ class OrganizationValidationHelper {
                 $full_name = $requesting_user->get('field_full_name')->value ?? 'N/A';
                 //$organisation_country = $requesting_user->get('field_organisation_country')->value ?? 'N/A';
                 $country = $requesting_user->get('field_organisation_country')->value ?? '';
-                $country_label = $requesting_user->get('field_organisation_country')->getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
+                $country_label = $requesting_user->get('field_organisation_country')->
+                   getFieldDefinition()->getSetting('allowed_values')[$country] ?? $country;
                 $organisation_role = $requesting_user->get('field_organisation_role')->value ?? 'N/A';
 
                 // $params = [
@@ -245,18 +250,19 @@ class OrganizationValidationHelper {
                     $email,
                     \Drupal::languageManager()->getDefaultLanguage()->getId(),
                     $params,
-                    NULL,
-                    TRUE
+                    null,
+                    true
                 );
             }
 
             // ✅ Log the email event
-            \Drupal::logger('organization_validation')->notice('Ownership request sent to owners of Organisation @organisation for User @user', [
+            \Drupal::logger('organization_validation')->
+              notice('Ownership request sent to owners of Organisation @organisation for User @user', [
                 '@organisation' => $organisation->getTitle(),
                 '@user' => $requesting_user->getDisplayName(),
             ]);
 
-            $requesting_user->set('field_has_requested_ownership', TRUE);
+            $requesting_user->set('field_has_requested_ownership', true);
             $requesting_user->save(); // ✅ Save the updated user entity
         }
 
@@ -266,7 +272,8 @@ class OrganizationValidationHelper {
     /**
      * Sends an email notification to all admin users when a new user confirms their organisational email.
      */
-    public static function notifyDiamasAdmins(Node $organisation) {
+    public static function notifyDiamasAdmins(Node $organisation)
+    {
         // Get all admin users (users with the "administrator" role).
         $admin_users = \Drupal::entityTypeManager()
             ->getStorage('user')
@@ -290,7 +297,8 @@ class OrganizationValidationHelper {
             $organisation_email_adress = $organisation->get('field_ipsp_contact_email')->value ?? '';
             // $website_url = $organisation->get('field_ipsp_website_url')->value ?? '';
             $website_url_array = $organisation->get('field_ipsp_website_url')->getValue(); // i.alevizos 18/3/25
-            $website_url = isset($website_url_array[0]['uri']) ? $website_url_array[0]['uri'] : '';  // i.alevizos 18/3/25
+            // i.alevizos 18/3/25
+            $website_url = isset($website_url_array[0]['uri']) ? $website_url_array[0]['uri'] : '';
             $country = $organisation->get('field_country')->value ?? '';
 
             // ✅ Generate the user review link for admin.
@@ -302,7 +310,11 @@ class OrganizationValidationHelper {
 
             // \Drupal::logger('organization_validation')->debug('test'. $orgId);
 
-            $review_org_url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $orgId], ['absolute' => TRUE])->toString();
+            $review_org_url = \Drupal\Core\Url::fromRoute(
+                'entity.node.canonical',
+                ['node' => $orgId],
+                ['absolute' => true]
+            )->toString();
 
             // ✅ Email parameters with correct data.
             $params = [
@@ -325,7 +337,8 @@ class OrganizationValidationHelper {
             }
 
             // ✅ Log the notification.
-            \Drupal::logger('organization_validation')->notice('Admin notification sent: Organisation pending review. Org: @name (@email)', [
+            \Drupal::logger('organization_validation')->
+                notice('Admin notification sent: Organisation pending review. Org: @name (@email)', [
                 '@name' => $organisation_name,
                 '@email' => $organisation_email_adress,
             ]);
@@ -335,7 +348,8 @@ class OrganizationValidationHelper {
     /**
      * Sends an email notification to all admin users when a new user confirms their organisational email.
      */
-    public static function notifyOwnersForPublish(Node $organisation) {
+    public static function notifyOwnersForPublish(Node $organisation)
+    {
         // ✅ Retrieve current owners of the organisation.
         $existing_owners = $organisation->get('field_organisation_owners')->getValue();
         $owner_ids = array_column($existing_owners, 'target_id');
@@ -363,10 +377,15 @@ class OrganizationValidationHelper {
                 $organisation_email_adress = $organisation->get('field_ipsp_contact_email')->value ?? '';
                 // $website_url = $organisation->get('field_ipsp_website_url')->value ?? '';
                 $website_url_array = $organisation->get('field_ipsp_website_url')->getValue(); // i.alevizos 18/3/25
-                $website_url = isset($website_url_array[0]['uri']) ? $website_url_array[0]['uri'] : '';  // i.alevizos 18/3/25
+                // i.alevizos 18/3/25
+                $website_url = isset($website_url_array[0]['uri']) ? $website_url_array[0]['uri'] : '';
                 $country = $organisation->get('field_country')->value ?? '';
 
-                $review_org_url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $orgId], ['absolute' => TRUE])->toString();
+                $review_org_url = \Drupal\Core\Url::fromRoute(
+                    'entity.node.canonical',
+                    ['node' => $orgId],
+                    ['absolute' => true]
+                )->toString();
 
                 // ✅ Email parameters with correct data.
                 $params = [
@@ -388,22 +407,17 @@ class OrganizationValidationHelper {
                 );
 
                 // ✅ Log the notification.
-                \Drupal::logger('organization_validation')->notice('Owner notification sent: Organisation is published. Org: @name (@email)', [
+                \Drupal::logger('organization_validation')->notice(
+                    'Owner notification sent: Organisation is published. Org: @name (@email)',
+                    [
                     '@name' => $organisation_name,
                     '@email' => $organisation_email_adress,
-                ]);
+                    ]
+                );
             }
         }
     }
 }
-
-
-
-
-
-
-
-
 
 /**
      * ✅ Finds a matching organisation based on name or email.
