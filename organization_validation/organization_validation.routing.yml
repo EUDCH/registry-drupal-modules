@@ -73,7 +73,7 @@ organization_validation.approve_ownership:
     _title: "Approve Ownership Request"
   requirements:
     _permission: "access content"
-    #_user_is_logged_in: 'TRUE'  # Only allow logged-in users
+    # _user_is_logged_in: 'TRUE'  # Only allow logged-in users
 
 organization_validation.confirmation_page:
   path: "/organization-validation/confirmation"
