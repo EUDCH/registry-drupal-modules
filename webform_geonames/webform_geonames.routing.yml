@@ -6,4 +6,3 @@ webform_geonames.autocomplete:
     _title: "Geonames Autocomplete"
   requirements:
     _permission: "access content"
-
