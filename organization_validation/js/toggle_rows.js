@@ -21,7 +21,7 @@
 // eslint-disable-next-line no-unused-vars
 function submitSelectedOrganisation() {
   console.log("test");
-  let selectedRadio = $('input[name="selected_organisation"]:checked');
+  const selectedRadio = $('input[name="selected_organisation"]:checked');
 
   if (selectedRadio.length === 0) {
     alert("Please select an organisation first.");
@@ -34,7 +34,7 @@ function submitSelectedOrganisation() {
 
   $.ajax({
     url: "/organization-validation/manageSelectedOrganisations", // Route to controller
-    type: 'POST',
+    type: "POST",
     data: { organisation_data: orgData }, // Send combined data
     success: function (response) {
       if (response.redirect) {
