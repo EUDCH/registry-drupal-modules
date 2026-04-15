@@ -9,11 +9,13 @@
         "composer/installers": "^1.9 || ^2",
         "drupal/coder": "^9.0",
         "drupal/core-recommended": "^10",
+        "mglaman/phpstan-drupal": "^2.0.13",
         "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-strict-rules": "^2.0",
         "slevomat/coding-standard": "^8.6",
-        "mglaman/phpstan-drupal": "^2.0.13",
-        "phpstan/phpstan": "^2.1"
+        "symfony/finder": "^6.2 || ^7.0 || ^8.0",
+        "symfony/yaml": "^6.2 || ^7.0 || ^8.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
