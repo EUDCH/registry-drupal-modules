@@ -1,0 +1,36 @@
+---
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-upload:
+    name: Build and upload release archive
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build modules archive
+        run: |
+          ARCHIVE_NAME="registry-drupal-modules-${{ github.event.release.tag_name }}.tar.gz"
+          tar czf "${ARCHIVE_NAME}" \
+            computed_address \
+            core \
+            email_protect \
+            organization_listing \
+            organization_validation \
+            org_moderation_sync \
+            webform_geonames
+          echo "ARCHIVE_NAME=${ARCHIVE_NAME}" >> "${GITHUB_ENV}"
+
+      - name: Upload archive to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" "${ARCHIVE_NAME}"
