@@ -4,7 +4,7 @@ type: module
 description: "Validates organization name during user registration."
 core_version_requirement: ^10
 package: Custom
-version: "1.1.0"
+version: "1.1.1"
 dependencies:
   - drupal:user
   - drupal:node

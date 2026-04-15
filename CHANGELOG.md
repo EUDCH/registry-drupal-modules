@@ -2,7 +2,21 @@
 
 All notable changes to this repository are documented here.
 
-## [Unreleased] – Per-module semver versioning
+## [1.2.0] – Release workflow and dead code removal
+
+### Added
+
+- feat: GitHub Actions workflow to build and publish a modules archive on release creation.
+
+### Changed
+
+- feat: remove unused code from `organization_validation` module (`1.1.1`).
+
+## [1.1.1] – Per-module semver versioning and CI tooling
+
+### Added
+
+- feat: add Dependabot for automated dependency updates and MegaLinter for code quality checks.
 
 ### Changed
 
