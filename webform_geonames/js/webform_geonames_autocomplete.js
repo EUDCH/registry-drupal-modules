@@ -89,10 +89,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const filteredCities = cities
     .filter(city => !/\d/.test(city.label))
     .map(city => {
-      const [cityName, ...rest] = city.label.split(",");
-      return { label: cityName.trim(), details: rest.join(",").trim(), value: city.value };
-    })
-    .slice(0, 10);
+        const [cityName, ...rest] = city.label.split(",");
+        return {
+          label: cityName.trim(),
+          details: rest.join(",").trim(),
+          value: city.value
+        };
+      })
+      .slice(0, 10);
 
     // Populate suggestions dropdown
     if (filteredCities.length > 0) {
@@ -102,10 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
         suggestionItem.style.padding = "8px";
         suggestionItem.style.cursor = "pointer";
         suggestionItem.style.transition = "background-color 0.2s ease";
-        suggestionItem.addEventListener("mouseenter",
+        suggestionItem.addEventListener(
+          "mouseenter",
           () => (suggestionItem.style.backgroundColor = "#f5f5f5")
         );
-        suggestionItem.addEventListener("mouseleave",
+        suggestionItem.addEventListener(
+          "mouseleave",
           () => (suggestionItem.style.backgroundColor = "white")
         );
 
@@ -142,12 +148,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // Close suggestions when clicking outside
   document.addEventListener("click", function (event) {
     document.querySelectorAll(".city-suggestions").forEach(container => {
-      if (!container.contains(event.target) &&
+      if (
+        !container.contains(event.target) &&
         !document
-        .querySelector(
+          .querySelector(
           `[data-id="${container.id.replace("city-suggestions-", "")}"]`
-        )
-        ?.contains(event.target)
+          )
+          ?.contains(event.target)
       ) {
         container.innerHTML = "";
       }
@@ -175,7 +182,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Assign unique IDs to city fields
   function assignCityFieldIds() {
-    document.querySelectorAll(".webform-city-autocomplete")
+    document
+      .querySelectorAll(".webform-city-autocomplete")
       .forEach((input, index) => {
         input.dataset.id = index;
       });
