@@ -10,7 +10,7 @@ All notable changes to this repository are documented here.
 
 ### Changed
 
-- feat: remove unused code from `organization_validation` module.
+- feat: remove unused code from `organization_validation` module (`1.1.1`).
 
 ## [1.1.1] – Per-module semver versioning and CI tooling
 
