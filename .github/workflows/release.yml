@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release tag to upload the archive to'
+        description: "Release tag to upload the archive to"
         required: true
 
 jobs:
