@@ -2,25 +2,19 @@
 
 All notable changes to this repository are documented here.
 
-## [Unreleased]
+## [1.2.0] – Release automation and cleanup
 
 ### Added
 
-- feat: automate draft release creation on tag push. Pushing a git tag now triggers the release workflow, which creates a draft release and attaches the modules archive. The draft can then be reviewed and published manually.
-
-### Fixed
-
-- fix: remove accidental shared hosting artifacts (`.cagefs`, `.cl.selector`) from `email_protect` module (`1.0.1`).
-
-## [1.2.0] – Release workflow and dead code removal
-
-### Added
-
-- feat: GitHub Actions workflow to build and publish a modules archive on release creation.
+- feat: GitHub Actions workflow triggered on tag push to automatically create a draft release and attach a modules archive. The draft can then be reviewed and published manually.
 
 ### Changed
 
 - feat: remove unused code from `organization_validation` module (`1.1.1`).
+
+### Fixed
+
+- fix: remove accidental shared hosting artifacts (`.cagefs`, `.cl.selector`) from `email_protect` module (`1.0.1`).
 
 ## [1.1.1] – Per-module semver versioning and CI tooling
 
