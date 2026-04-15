@@ -2,6 +2,12 @@
 
 All notable changes to this repository are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- fix: remove accidental shared hosting artifacts (`.cagefs`, `.cl.selector`) from `email_protect` module (`1.0.1`).
+
 ## [1.2.0] – Release workflow and dead code removal
 
 ### Added
