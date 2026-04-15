@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Attach autocomplete functionality to city input fields
   function attachAutocomplete(cityField) {
     if (!cityField) return;
-    
+
     cityField.addEventListener("input", debounce(fetchCities, 500)); // Fetch cities with debounce
     cityField.addEventListener("focus", handleCityFocus); // Show suggestions on focus
   }
@@ -87,12 +87,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Format city suggestions
     const filteredCities = cities
-      .filter(city => !/\d/.test(city.label))
-      .map(city => {
-        const [cityName, ...rest] = city.label.split(",");
-        return { label: cityName.trim(), details: rest.join(",").trim(), value: city.value };
-      })
-      .slice(0, 10);
+    .filter(city => !/\d/.test(city.label))
+    .map(city => {
+      const [cityName, ...rest] = city.label.split(",");
+      return { label: cityName.trim(), details: rest.join(",").trim(), value: city.value };
+    })
+    .slice(0, 10);
 
     // Populate suggestions dropdown
     if (filteredCities.length > 0) {
