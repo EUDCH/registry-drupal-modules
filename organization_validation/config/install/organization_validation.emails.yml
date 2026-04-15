@@ -1,65 +1,136 @@
 ---
 # 📩 1. Verify Organisation Email (User Confirmation)
-verify_org_email:
-  subject: "Please confirm your organisational email"
-  body: |
-    Dear [user:field_full_name],
-
-    Please confirm your organisational email by clicking the link below:
-
-    [confirmation_url]
-
-  from: "EDCH Registry"
-
+# verify_org_email:
+#   subject: "Please confirm your organisational email"
+#   body: |
+#     Dear [full_name],
+#
+#     Please confirm your organisational email by clicking the link below:
+#
+#     [confirmation_url]
+#
+#     If you have any questions or need further assistance, please contact us at registry@edch.eu.
+#
+#     — The EDCH Registry team
+#
+#   from: "EDCH Registry <registry@edch.eu>"
+#
 # 📩 2. Notify Admins - User Confirmed Org Email
+# admin_notification:
+#   subject: "New User review pending"
+#   body: |
+#     A new user has confirmed their organisational email and is awaiting admin review.
+#
+#     **User:** [user_name]
+#     **Email:** [user_email]
+#
+#     Click the link below to review the user:
+#
+#     [review_link]
+#
+#   from: "EDCH Registry <registry@edch.eu>"
+
 admin_notification:
-  subject: "New User pending"
+  subject: EDCH Registry - Organisation review pending
   body: |
-    A new user has confirmed their organisational email and is awaiting admin review.
+    The data of the organisation below need review:
 
-    **User:** [user_name]
-    **Email:** [user_email]
+    **Organisation Name:** [org_name]
+    **Country:** [org_country]
+    **Email:** [org_email]
+    **url:** [org_url]
 
-    Click the link below to review the user:
+    Click the link below to review the organisation:
 
     [review_link]
 
-  from: "EDCH Registry"
+    — The EDCH Registry team
+
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 3. Admin Verified User - Notify User
 verify_organisation:
-  subject: "Verify your organisation"
+  subject: EDCH Registry - Verify your organisation
   body: |
-    Dear [user:field_full_name],
+    Dear [full_name],
 
-    Your account has been verified by the administrators. Please visit the following link to create or validate your organisation's profile:
+    Your account has been verified by the administrators. Please visit the following link to create or validate your organisation’s profile:
 
     [check_organisation_link]
 
-  from: "EDCH Registry"
+    — The EDCH Registry team
+
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 4. Ownership Request Sent to Organisation Owners
 ownership_request:
-  subject: "Ownership Request for [organisation_name]"
+  subject: EDCH Registry - Profile management request for [organisation_name]
   body: |
-    Dear [owner_name],
+    Dear [owner_full_name],
 
-    [user_name] has requested ownership of [organisation_name].
+    [full_name] ([user_email]) has requested permission to manage the profile of [organisation_name] on the EDCH Registry.
+    Role: [organisation_role]
+    Country: [organisation_country]
 
-    To approve or reject the request, please visit the following link:
+    To accept the request, please click on the link below:
 
     [approve_ownership_link]
 
-  from: "EDCH Registry"
+    If you do not accept the request, please contact us at registry@edch.eu.
+
+    — The EDCH Registry team
+
+  from: "EDCH Registry <registry@edch.eu>"
 
 # 📩 5. Ownership Approved - Notify User
 ownership_approved:
-  subject: "Your Ownership Request Has Been Approved"
+  subject: EDCH Registry - Profile management request accepted
   body: |
-    Congratulations! You have been approved as an owner of [organisation_name].
+    Dear [full_name],
+
+    [actionOwnerFullName] ([actionOwnerEmail]) has accepted your request. You can now manage the profile of [organisation_name] on the EDCH Registry.
+
+    You can access the profile using the link below:
+
+    [edit_organisation_link]
+
+    If you have any questions or need further assistance, please contact us at registry@edch.eu.
+
+    — The EDCH Registry team
+
+  from: "EDCH Registry <registry@edch.eu>"
+
+# 📩 5. Ownership Approved - Notify All owners
+ownership_approved_notification_to_owners:
+  subject: EDCH Registry - Profile management request accepted
+  body: |
+    Dear [owner_full_name],
+
+    [full_name] ([newOwnerEmail]) has been informed that you have accepted their request and can now manage the profile of [organisation_name] on the EDCH Registry.
 
     You can now manage the organisation profile using the link below:
 
     [edit_organisation_link]
 
-  from: "EDCH Registry"
+    If you have any questions or need further assistance, please contact us at registry@edch.eu.
+
+    — The EDCH Registry team
+
+  from: "EDCH Registry <registry@edch.eu>"
+
+owner_notification_when_org_published:
+  subject: Welcome to the EDCH Registry - Your organisation’s profile is published
+  body: |
+    Dear [full_name],
+
+    Following a review against our Registry criteria, we’re pleased to let you know that your organisation’s profile is now published! You can review it here: [review_link]
+
+    If you haven’t already, please invite your team members to join the EDCH Forum (https://forum.edch.eu) — it’s a great space to connect with peers, exchange ideas, and stay updated on community-led initiatives. We’d love to see you active there!
+
+    For any questions or further assistance, please contact us at registry@edch.eu.
+
+    Thank you for being part of the EDCH community!
+
+    — The EDCH Registry team
+
+  from: "EDCH Registry <registry@edch.eu>"
