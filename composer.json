@@ -3,7 +3,7 @@
     "description": "Custom Drupal modules for EDCH",
     "type": "project",
     "require": {
-        "php": ">=8.3 <8.5"
+        "php": "^8.3"
     },
     "require-dev": {
         "composer/installers": "^1.9 || ^2",
