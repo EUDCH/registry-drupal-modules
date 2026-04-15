@@ -64,79 +64,8 @@ function organization_validation_webform_submission_access(WebformSubmissionInte
 }
 
 function organization_validation_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) {
-    // \Drupal::logger('organization_validation')->warning(
-    //     'organization_validation_entity_access Access check: Node ID @nid | Type @type | Operation @op | User ID @uid',
-    //     [
-    //         '@nid' => $entity->getEntityTypeId(),
-    //         '@type' => $entity->bundle(),
-    //         '@op' => $operation,
-    //         '@uid' => $account->id(),
-    //     ]
-    // );
+
 }
-
-// /**
-//  * Implements hook_node_access().
-//  * Controls access to adding and editing organisation nodes.
-//  */
-// function organization_validation_node_access(Node $node, $operation, AccountInterface $account) {
-//     // \Drupal::logger('organization_validation')->warning(
-//     //     'organization_validation_node_access Access check: Node ID @nid | Type @type | Operation @op | User ID @uid',
-//     //     [
-//     //         '@nid' => $node->id(),
-//     //         '@type' => $node->bundle(),
-//     //         '@op' => $operation,
-//     //         '@uid' => $account->id(),
-//     //     ]
-//     // );
-
-//     if ($node->getType() !== 'organisation') {
-//         return AccessResult::neutral();
-//     }
-
-//     // ✅ Load the user entity.
-//     $user = User::load($account->id());
-//     if (!$user) {
-//         return AccessResult::forbidden();
-//     }
-
-//     // ✅ Restrict Add & Edit access to only admin-verified users.
-//     // if (!$user->get('field_is_verified')->value) {
-//     //     \Drupal::logger('organization_validation')->warning('User @uid attempted to access Organisation add/update without verification.', ['@uid' => $user->id()]);
-//     //     return AccessResult::forbidden();
-//     // }
-
-//     // ✅ Allow access to administrators.
-//     if ($user->hasRole('administrator')) {
-//         return AccessResult::allowed();
-//     }
-
-//     if ($operation === 'update') {
-//         // ✅ Check if the user is in `field_organisation_owners`.
-//         $organisation_owners = $node->get('field_organisation_owners')->getValue();
-//         $owner_ids = array_column($organisation_owners, 'target_id');
-
-//         if (in_array($user->id(), $owner_ids)) {
-//             return AccessResult::allowed();
-//         }
-
-//         // ✅ Allow edit access if there is no owner & user matches Organisation Name or Email.
-//         if (empty($owner_ids)) {
-//             $user_org_name = $user->get('field_organization_name')->value ?? '';
-//             // $user_org_email = $user->get('field_organisational_email')->value ?? '';
-//             $org_name = $node->get('field_ipsp_name')->value ?? '';
-//             $org_email = $node->get('field_ipsp_website_url')->value ?? '';
-
-//             if (strcasecmp($user_org_name, $org_name) === 0) {
-//                 return AccessResult::allowed();
-//             }
-//         }
-
-//         return AccessResult::forbidden();
-//     }
-
-//     return AccessResult::neutral();
-// }
 
 /**
  * Implements hook_form_alter().
@@ -178,11 +107,6 @@ function organization_validation_form_alter(&$form, FormStateInterface $form_sta
             if (!$current_user->hasPermission('administer nodes') && !in_array($user_id, $owner_ids)) {
                 $form['field_organisation_owners']['#access'] = FALSE;
             }
-
-            // if (!$user || !$user->get('field_is_verified')->value) {
-            //     \Drupal::messenger()->addError(t('You must be verified by an administrator before creating or editing an organisation.'));
-            //     $form['#access'] = FALSE;
-            // }
         }
     }
 }
@@ -294,10 +218,6 @@ function organization_validation_entity_presave(EntityInterface $entity) {
                 '@nid' => $entity->id(),
             ]);
         }
-
-        // if (empty($entity->send_email_to_diamas_admins)) {
-        //     OrganizationValidationHelper::notifyDiamasAdmins($entity);
-        // }
     }
 }
 
@@ -360,12 +280,8 @@ function organization_validation_node_update(Drupal\Core\Entity\EntityInterface 
 
 function organization_validation_node_insert(Drupal\Core\Entity\EntityInterface $entity) {
     if ($entity instanceof Drupal\node\Entity\Node && $entity->bundle() === 'organisation') {
-        // \Drupal::logger('organization_validation')->debug('organization_validation_node_insert:: Redirecting to Check Organisation after organisation save @nid', [
-        //     '@nid' => $entity->id(),
-        // ]);
-
         OrganizationValidationHelper::notifyDiamasAdmins($entity);
-        
+
         $current_user = \Drupal::currentUser();
         if (!in_array('administrator', $current_user->getRoles())) {
             // ✅ Redirect the user after the organisation is updated.
@@ -541,48 +457,6 @@ function organization_validation_send_email($key, $recipient = NULL, $params = [
 }
 
 
-// /**
-//  * Send an email using a predefined template from organization_validation.emails.yml
-//  */
-// function organization_validation_send_email($key, $recipient, $params = []) {
-//     $config = \Drupal::config('organization_validation.emails');
-
-//     // Load email details
-//     $subject = $config->get("$key.subject") ?? "Missing Subject";
-//     $body_template = $config->get("$key.body") ?? "Missing Body";
-//     $from = $config->get("$key.from") ?? "No Reply";
-
-//     // Replace placeholders in the email body
-//     foreach ($params as $placeholder => $value) {
-//         $body_template = str_replace("[$placeholder]", $value, $body_template);
-//     }
-
-//     // Send email
-//     \Drupal::service('plugin.manager.mail')->mail(
-//         'organization_validation',
-//         $key,
-//         $recipient,
-//         \Drupal::languageManager()->getDefaultLanguage()->getId(),
-//         ['subject' => $subject, 'body' => $body_template],
-//         NULL,
-//         TRUE
-//     );
-
-//     // Log the email for debugging
-//     \Drupal::logger('organization_validation')->notice("Sent email [$key] to [$recipient]");
-// }
-
-// /**
-//  * Implements hook_theme().
-//  */
-// function organization_validation_theme($existing, $type, $theme, $path) {
-//     return [
-//         'organization_validation_confirmation' => [
-//             'variables' => ['message' => NULL],
-//             'template' => 'organization_validation_confirmation', // Matches the file name below
-//         ],
-//     ];
-// }
 /**
  * Implements hook_theme().
  */
