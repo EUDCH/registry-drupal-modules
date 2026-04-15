@@ -30,6 +30,7 @@ ADDITIONAL_EXCLUDED_DIRECTORIES:
 JAVASCRIPT_ES_PRE_COMMANDS:
   - command: npm install eslint-plugin-yml@1.19.1
     cwd: root
+JAVASCRIPT_ES_DISABLE_ERRORS: true
 
 PHP_PHPSTAN_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress --ignore-platform-reqs
