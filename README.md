@@ -96,6 +96,21 @@ admin review/confirmation flows with email notifications.
 **Depends on:** `drupal:user`, `drupal:node` (Core 10).
 Additional moderation features are supported via an event subscriber.
 
+## Release process
+
+1. **Update the CHANGELOG** — move the `[Unreleased]` section to the new version (e.g. `[1.3.0]`) and add a fresh empty `[Unreleased]` section at the top.
+2. **Bump module versions** — update the `version` field in the `.info.yml` of any module whose code changed.
+3. **Open a PR** with the CHANGELOG and version bump changes, get it merged.
+4. **Push a git tag** matching the new version:
+   ```sh
+   git tag 1.3.0
+   git push upstream 1.3.0
+   ```
+5. The **Release workflow** runs automatically: it creates a draft GitHub release and attaches a `registry-drupal-modules-<tag>.tar.gz` archive containing all custom module directories.
+6. **Review the draft** on GitHub and publish it once satisfied.
+
+> To re-run the workflow against an existing draft (e.g. after a failed run), go to **Actions → Release → Run workflow** and select the tag.
+
 ## Funded by the European Union
 
 This work has been funded by the European Union's Horizon Europe research and

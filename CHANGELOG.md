@@ -4,6 +4,10 @@ All notable changes to this repository are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- feat: automate draft release creation on tag push. Pushing a git tag now triggers the release workflow, which creates a draft release and attaches the modules archive. The draft can then be reviewed and published manually.
+
 ### Fixed
 
 - fix: remove accidental shared hosting artifacts (`.cagefs`, `.cl.selector`) from `email_protect` module (`1.0.1`).
