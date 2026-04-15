@@ -28,7 +28,7 @@ ADDITIONAL_EXCLUDED_DIRECTORIES:
   - core/
 
 JAVASCRIPT_ES_PRE_COMMANDS:
-  - command: npm install eslint-plugin-yml@2.0.2
+  - command: npm install eslint-plugin-yml@1.19.1
     cwd: root
 
 PHP_PHPSTAN_PRE_COMMANDS:
