@@ -21,7 +21,6 @@ jobs:
           ARCHIVE_NAME="registry-drupal-modules-${{ github.event.release.tag_name }}.tar.gz"
           tar czf "${ARCHIVE_NAME}" \
             computed_address \
-            core \
             email_protect \
             organization_listing \
             organization_validation \
