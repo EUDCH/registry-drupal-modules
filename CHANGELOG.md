@@ -12,7 +12,11 @@ All notable changes to this repository are documented here.
 
 - feat: remove unused code from `organization_validation` module.
 
-## [1.1.1] – Per-module semver versioning
+## [1.1.1] – Per-module semver versioning and CI tooling
+
+### Added
+
+- feat: add Dependabot for automated dependency updates and MegaLinter for code quality checks.
 
 ### Changed
 
