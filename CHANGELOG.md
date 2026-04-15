@@ -15,6 +15,7 @@ All notable changes to this repository are documented here.
 ### Fixed
 
 - fix: remove accidental shared hosting artifacts (`.cagefs`, `.cl.selector`) from `email_protect` module (`1.0.1`).
+- fix: remove accidental shared hosting artifacts (`.cagefs`, `.cl.selector`) from `webform_geonames` module (`1.0.1`).
 
 ## [1.1.1] – Per-module semver versioning and CI tooling
 
