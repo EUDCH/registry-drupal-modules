@@ -2,6 +2,12 @@
 
 All notable changes to this repository are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- fix: delete unused `config/install/organization_validation.emails.yml` — the module reads templates from the root-level file at runtime; the config/install copy was never used after module enable (`organization_validation` `1.1.2`).
+
 ## [1.2.0] – Release automation and cleanup
 
 ### Added
