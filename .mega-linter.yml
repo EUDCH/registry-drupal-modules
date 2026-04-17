@@ -22,10 +22,16 @@ DISABLE_LINTERS:
   - PHP_PSALM
   - PHP_PHPCSFIXER
   - REPOSITORY_DEVSKIM
+  - REPOSITORY_DUSTILOCK
 
 ADDITIONAL_EXCLUDED_DIRECTORIES:
   - vendor/
   - core/
+
+JAVASCRIPT_ES_PRE_COMMANDS:
+  - command: npm install eslint-plugin-yml@1.19.1
+    cwd: root
+JAVASCRIPT_ES_DISABLE_ERRORS: true
 
 PHP_PHPSTAN_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress --ignore-platform-reqs

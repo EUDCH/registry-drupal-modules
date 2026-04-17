@@ -53,7 +53,9 @@ jobs:
           # All available variables are described in documentation
           # https://megalinter.io/configuration/
           # Validates all source when push on main, else just the git diff with main. Override with true if you always want to lint all sources
-          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          # VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          # FIXME: validate codebase while testing
+          VALIDATE_ALL_CODEBASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Upload MegaLinter artifacts
