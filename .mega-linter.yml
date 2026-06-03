@@ -27,6 +27,9 @@ ADDITIONAL_EXCLUDED_DIRECTORIES:
   - vendor/
   - core/
 
+ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
+  - GITHUB_TOKEN
+
 PHP_PHPSTAN_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress --ignore-platform-reqs
     cwd: workspace
