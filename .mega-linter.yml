@@ -17,6 +17,11 @@ DISABLE:
   - SPELL
 
 DISABLE_LINTERS:
+  # GitHub Actions security scanning is owned by the dedicated, org-shared
+  # zizmor workflow (.github/workflows/zizmor.yml, EUDCH/.github reusable),
+  # which is tuned and runs with API access. Disable MegaLinter's bundled
+  # copy to avoid a second, differently-configured zizmor scan.
+  - ACTION_ZIZMOR
   - JAVASCRIPT_STANDARD
   - JSON_NPM_PACKAGE_JSON_LINT
   - PHP_PSALM
@@ -26,9 +31,6 @@ DISABLE_LINTERS:
 ADDITIONAL_EXCLUDED_DIRECTORIES:
   - vendor/
   - core/
-
-ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
-  - GITHUB_TOKEN
 
 PHP_PHPSTAN_PRE_COMMANDS:
   - command: composer install --no-interaction --no-progress --ignore-platform-reqs
