@@ -5,7 +5,9 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    # Wait a few days before applying an action bump, so a compromised fresh
-    # release (tj-actions / Shai-Hulud style) is less likely to land automatically.
+    # One-day cooldown so a same-day yanked or compromised action release
+    # (tj-actions / Shai-Hulud style) is not applied automatically. Security
+    # fixes come through GitHub's advisory feed separately and are not held by
+    # this cooldown. Matches the OPERAS Renovate release-age setting.
     cooldown:
-      default-days: 7
+      default-days: 1
