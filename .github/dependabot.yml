@@ -5,3 +5,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    # Wait a few days before applying an action bump, so a compromised fresh
+    # release (tj-actions / Shai-Hulud style) is less likely to land automatically.
+    cooldown:
+      default-days: 7
