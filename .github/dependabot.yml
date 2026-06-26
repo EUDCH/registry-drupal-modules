@@ -5,3 +5,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    # Cooldown so a yanked or compromised action release (tj-actions /
+    # Shai-Hulud style) is not applied automatically; zizmor's
+    # dependabot-cooldown audit requires default-days >= 7. (Our self-hosted
+    # Renovate uses 1 day with OSV fast-tracking security fixes; the two tools
+    # encode different judgments, so the value differs by platform.)
+    cooldown:
+      default-days: 7

@@ -1,7 +1,7 @@
 # Calls the org-shared reusable zizmor workflow (EUDCH/.github) to scan this
 # repo's GitHub Actions workflows for supply-chain and injection risks.
-# Pinned to a commit SHA. Report-only: findings land in the Security tab.
-# Flip enforce: true once the baseline is clean.
+# Pinned to a commit SHA. Findings also land in the Security tab; enforce: true
+# makes any finding fail the check (blocking).
 name: zizmor
 
 on:
@@ -16,4 +16,6 @@ permissions:
 
 jobs:
   zizmor:
-    uses: EUDCH/.github/.github/workflows/zizmor.yml@2ef8fb2bb9801240bd2bffd2bafaa7e030f8ec06  # EUDCH/.github#3
+    uses: EUDCH/.github/.github/workflows/zizmor.yml@2ef8fb2bb9801240bd2bffd2bafaa7e030f8ec06 # EUDCH/.github#3
+    with:
+      enforce: true
