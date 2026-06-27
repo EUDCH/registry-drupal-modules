@@ -64,8 +64,9 @@ class ConfirmOrganisationForm extends FormBase {
       $response->send();
       exit();
     }
-    
+
     // Redirect back to user registration completion.
     $form_state->setRedirect('organization_validation.thank_you_page');
   }
+
 }

@@ -5,9 +5,6 @@ namespace Drupal\organization_validation\Plugin\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\user\Entity\User;
 use Drupal\Core\Url;
-use Drupal\Core\Mail\MailManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Processes user verification in a queue to avoid database locks.
@@ -56,4 +53,5 @@ class UserVerificationQueue extends QueueWorkerBase {
 
     $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
   }
+
 }
