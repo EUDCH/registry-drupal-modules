@@ -19,6 +19,7 @@
     "drupalTranslations": true,
     "jQuery": true,
     "_": true,
+    "$": true,
     "Cookies": true,
     "Backbone": true,
     "Modernizr": true,
