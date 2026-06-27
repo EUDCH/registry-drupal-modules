@@ -57,3 +57,13 @@ REPOSITORY_KICS_ARGUMENTS: "--exclude-paths core/ --exclude-paths vendor/"
 REPOSITORY_KINGFISHER_ARGUMENTS: "--exclude core/ --exclude vendor/"
 
 REPOSITORY_OSV_SCANNER_ARGUMENTS: "--allow-no-lockfiles"
+
+# dustilock is a project-mode scanner: MegaLinter's own filters
+# (FILTER_REGEX_EXCLUDE / ADDITIONAL_EXCLUDED_DIRECTORIES) do not apply to it,
+# and dustilock has no ignore file or --exclude flag (only -r and -p). Run
+# --recursive, it walks the composer-installed Drupal core/ and vendor/ and
+# fails on a core test fixture (core/modules/system/tests/fixtures/HtaccessTest/
+# package.json), not on our code. Dropping --recursive scopes it to the repo's
+# own top-level package.json (the only first-party package file), which keeps
+# the dependency-confusion check on what we actually ship.
+REPOSITORY_DUSTILOCK_COMMAND_REMOVE_ARGUMENTS: "--recursive"
