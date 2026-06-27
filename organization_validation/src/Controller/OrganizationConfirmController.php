@@ -56,4 +56,5 @@ class OrganizationConfirmController extends ControllerBase {
       '#form' => \Drupal::formBuilder()->getForm('Drupal\organization_validation\Form\ConfirmOrganisationForm', $org_id),
     ];
   }
+
 }
