@@ -268,8 +268,9 @@ class OrganizationValidationHelper {
       // ✅ Save the updated user entity
       $requesting_user->save();
     }
-
-    \Drupal::logger('organization_validation')->notice('Ownership request not send. Owners Empty');
+    else {
+      \Drupal::logger('organization_validation')->notice('Ownership request not send. Owners Empty');
+    }
   }
 
   /**
@@ -349,6 +350,9 @@ class OrganizationValidationHelper {
     $existing_owners = $organisation->get('field_organisation_owners')->getValue();
     $owner_ids = array_column($existing_owners, 'target_id');
 
+    // Default to an empty list so the loop below is a no-op when the
+    // organisation has no owners (avoids an undefined-variable notice).
+    $all_owners = [];
     if (!empty($owner_ids)) {
       // Load all user entities at once (better performance)
       $all_owners = User::loadMultiple($owner_ids);
