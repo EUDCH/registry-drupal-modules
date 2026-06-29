@@ -36,14 +36,29 @@ export default [
         once: 'readonly',
       },
     },
-    // Curated subset of eslint:recommended (correctness). no-unused-vars warns;
-    // Drupal behavior signatures carry unused args, so args are not checked.
+    // Correctness rules from eslint:recommended, inlined because @eslint/js
+    // cannot be imported in MegaLinter's workspace (see header). no-unused-vars
+    // warns (Drupal behavior signatures carry unused args, so args aren't
+    // checked); no-console warns to match Drupal core's airbnb-base default.
     rules: {
+      'no-console': 'warn',
       'no-undef': 'error',
       'no-unused-vars': ['warn', { args: 'none' }],
+      'no-const-assign': 'error',
+      'no-func-assign': 'error',
+      'no-import-assign': 'error',
+      'no-class-assign': 'error',
+      'no-this-before-super': 'error',
+      'constructor-super': 'error',
+      'getter-return': 'error',
+      'no-setter-return': 'error',
+      'no-unsafe-negation': 'error',
+      'no-unsafe-optional-chaining': 'error',
+      'no-obj-calls': 'error',
       'no-dupe-args': 'error',
       'no-dupe-keys': 'error',
       'no-dupe-else-if': 'error',
+      'no-dupe-class-members': 'error',
       'no-unreachable': 'error',
       'no-cond-assign': 'error',
       'no-constant-condition': 'error',
@@ -52,6 +67,8 @@ export default [
       'no-self-assign': 'error',
       'no-fallthrough': 'error',
       'no-irregular-whitespace': 'error',
+      'no-sparse-arrays': 'error',
+      'no-ex-assign': 'error',
       'use-isnan': 'error',
       'valid-typeof': 'error',
     },
