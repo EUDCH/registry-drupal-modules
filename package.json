@@ -1,12 +1,8 @@
 {
-  "standard": {
-    "globals": [
-      "jQuery",
-      "Drupal",
-      "once",
-      "$",
-      "alert",
-      "MutationObserver"
-    ]
+  "name": "registry-drupal-modules",
+  "private": true,
+  "description": "Lint tooling config for the EDCH Registry custom Drupal modules.",
+  "devDependencies": {
+    "eslint": "^10"
   }
 }
