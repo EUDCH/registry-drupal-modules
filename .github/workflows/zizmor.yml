@@ -16,6 +16,6 @@ permissions:
 
 jobs:
   zizmor:
-    uses: EUDCH/.github/.github/workflows/zizmor.yml@b894585bda9b2de7b34acf4b7e67b407886cd1f0 # EUDCH/.github#6
+    uses: EUDCH/.github/.github/workflows/zizmor.yml@9a2cacc008d709f44b8d0d379c70788bc933f4c6 # EUDCH/.github#7
     with:
       enforce: true
