@@ -2,3 +2,5 @@ vendor/
 composer.lock
 .php-cs-fixer.cache
 core/
+node_modules/
+bun.lock
