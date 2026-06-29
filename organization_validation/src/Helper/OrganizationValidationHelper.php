@@ -269,7 +269,7 @@ class OrganizationValidationHelper {
       $requesting_user->save();
     }
     else {
-      \Drupal::logger('organization_validation')->notice('Ownership request not send. Owners Empty');
+      \Drupal::logger('organization_validation')->notice('Ownership request not sent: the organisation has no owner email addresses.');
     }
   }
 
