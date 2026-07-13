@@ -1,0 +1,23 @@
+# betterleaks secret-scanner config (MegaLinter REPOSITORY_BETTERLEAKS).
+#
+# MegaLinter auto-detects this file (descriptor config_file_name) and passes
+# it via `-c`. betterleaks (new in MegaLinter v9.6.0, gitleaks successor) scans
+# the whole working tree, including the composer-installed vendor/ and Drupal
+# core/ trees that other repository linters already exclude. That produced two
+# false positives, e.g. Symfony's Constraints/PasswordStrength.php constant
+# `PASSWORD_STRENGTH_ERROR` flagged as a generic-api-key.
+#
+# Keep all built-in rules and add the same vendor/ + core/ exclusion already
+# applied to checkov, kics and kingfisher in .mega-linter.yml.
+
+title = "registry-drupal-modules betterleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ignore third-party dependencies (composer vendor/ and Drupal core/)"
+paths = [
+  '''(^|/)vendor/''',
+  '''(^|/)core/''',
+]
