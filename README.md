@@ -106,7 +106,10 @@ Additional moderation features are supported via an event subscriber.
    git tag 1.3.0
    git push upstream 1.3.0
    ```
-5. The **Release workflow** runs automatically: it creates a draft GitHub release and attaches a `registry-drupal-modules-<tag>.tar.gz` archive containing all custom module directories.
+5. The **Release workflow** runs automatically: it creates a draft GitHub release
+   titled `v<tag>` — the tag itself and the archive name stay unprefixed — and
+   attaches a `registry-drupal-modules-<tag>.tar.gz` archive containing all custom
+   module directories.
 6. **Review the draft** on GitHub and publish it once satisfied.
 
 > To re-run the workflow against an existing draft (e.g. after a failed run), go to **Actions → Release → Run workflow** and select the tag.

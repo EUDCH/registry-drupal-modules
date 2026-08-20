@@ -29,7 +29,7 @@ jobs:
         run: |
           TAG="${REF_NAME}"
           gh release view "${TAG}" > /dev/null 2>&1 || \
-            gh release create "${TAG}" --draft --generate-notes --title "${TAG}"
+            gh release create "${TAG}" --draft --generate-notes --title "v${TAG}"
           echo "TAG=${TAG}" >> "${GITHUB_ENV}"
 
       - name: Build modules archive
