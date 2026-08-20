@@ -4,6 +4,6 @@ type: module
 description: "Computes a formatted address from city and country."
 core_version_requirement: ^10 || ^11
 package: "Custom"
-version: "1.0.0"
+version: "1.1.0"
 dependencies:
   - drupal:computed_field

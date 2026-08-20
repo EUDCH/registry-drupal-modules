@@ -4,4 +4,4 @@ type: module
 description: Syncs moderation state and publish status for Organisation content type.
 core_version_requirement: ^10 || ^11
 package: Custom
-version: "1.0.0"
+version: "1.1.0"

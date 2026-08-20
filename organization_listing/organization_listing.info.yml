@@ -4,6 +4,6 @@ type: module
 description: "Provides a page to list and filter published organizations."
 core_version_requirement: ^10 || ^11
 package: Custom
-version: "1.0.0"
+version: "1.1.0"
 dependencies:
   - drupal:views
