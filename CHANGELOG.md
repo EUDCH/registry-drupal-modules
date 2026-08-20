@@ -4,9 +4,33 @@ All notable changes to this repository are documented here.
 
 ## [Unreleased]
 
+## [1.3.0] – Drupal 11 compatibility declared
+
+### Added
+
+- feat: declare Drupal 11 compatibility on all six modules — `core_version_requirement` widened to `^10 || ^11`. `^9` is dropped: nothing we run is on Drupal 9.
+
+### Changed
+
+- chore: relicense the repository from MIT to GPL-3.0-or-later.
+- chore: bump every module a minor version to reflect the new core-compatibility declaration.
+  - `computed_address`: `1.1.0`
+  - `email_protect`: `1.1.0`
+  - `org_moderation_sync`: `1.1.0`
+  - `organization_listing`: `1.1.0`
+  - `organization_validation`: `1.2.0` (also carries the fixes below)
+  - `webform_geonames`: `1.1.0`
+- style: apply Drupal coding-standard fixes across the module code (phpcbf).
+- refactor: remove a leftover debug `console.log` from `organization_validation` (`1.2.0`).
+- ci: MegaLinter to v10, zizmor security scanning via the org-shared reusable workflow, ESLint flat config for v10, and GitHub Actions pinned to full-length commit SHAs.
+
 ### Fixed
 
-- fix: delete unused `config/install/organization_validation.emails.yml` — the module reads templates from the root-level file at runtime; the config/install copy was never used after module enable (`organization_validation` `1.1.2`).
+- fix: correct owner-notification logic bugs in `organization_validation` (`1.2.0`).
+- fix: delete unused `config/install/organization_validation.emails.yml` from
+  `organization_validation` (`1.2.0`) — the module reads templates from the
+  root-level file at runtime; the config/install copy was never used after
+  module enable.
 
 ## [1.2.0] – Release automation and cleanup
 
