@@ -2,7 +2,7 @@
 name: "Organization Listing"
 type: module
 description: "Provides a page to list and filter published organizations."
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10 || ^11
 package: Custom
 version: "1.0.0"
 dependencies:
