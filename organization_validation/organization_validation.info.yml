@@ -2,7 +2,7 @@
 name: "Organization Validation"
 type: module
 description: "Validates organization name during user registration."
-core_version_requirement: ^10
+core_version_requirement: ^10 || ^11
 package: Custom
 version: "1.1.2"
 dependencies:
