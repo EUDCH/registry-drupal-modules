@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\organization_validation\Helper\OrganizationValidationHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -501,6 +503,13 @@ class OrganizationValidationController extends ControllerBase {
      * Confirms the user’s association with an existing organisation.
      */
     public function confirmOrganisation($organisation, $user) {
+        // This writes to the {user} account, so a caller may only act on their own
+        // account (or an administrator on any). Without this a logged-in user could set
+        // any other user's field_organisation via a crafted URL.
+        $current = \Drupal::currentUser();
+        if ($current->id() != $user && !$current->hasPermission('administer users')) {
+            throw new AccessDeniedHttpException();
+        }
         $account = User::load($user);
         if ($account) {
             $account->set('field_organisation', $organisation);
@@ -513,7 +522,18 @@ class OrganizationValidationController extends ControllerBase {
      * Redirects the user to create a new organisation.
      */
     public function createOrganisation($user) {
-        return new RedirectResponse('/node/add/organisation?field_ipsp_name=' . urlencode(User::load($user)->get('field_organization_name')->value));
+        // Same self-or-admin rule as confirmOrganisation: this reflects the {user}
+        // account's organisation name, so it must not be callable for arbitrary users.
+        $current = \Drupal::currentUser();
+        if ($current->id() != $user && !$current->hasPermission('administer users')) {
+            throw new AccessDeniedHttpException();
+        }
+        $account = User::load($user);
+        if (!$account) {
+            // Previously this fatalled (calling ->get() on a NULL load) for an unknown uid.
+            throw new NotFoundHttpException();
+        }
+        return new RedirectResponse('/node/add/organisation?field_ipsp_name=' . urlencode($account->get('field_organization_name')->value));
     }
 }
 

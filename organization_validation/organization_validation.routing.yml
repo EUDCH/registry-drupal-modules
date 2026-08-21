@@ -45,7 +45,9 @@ organization_validation.confirm_organisation:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::confirmOrganisation'
     _title: "Confirm Organisation"
   requirements:
+    # This route writes to a user entity ({user}); it must never be anonymous.
     _permission: "access content"
+    _user_is_logged_in: 'TRUE'
 
 organization_validation.create_organisation:
   path: "/create-organisation/{user}"
@@ -53,7 +55,9 @@ organization_validation.create_organisation:
     _controller: '\Drupal\organization_validation\Controller\OrganizationValidationController::createOrganisation'
     _title: "Create Organisation"
   requirements:
+    # Reads a user entity ({user}) and reflects a field into a redirect; never anonymous.
     _permission: "access content"
+    _user_is_logged_in: 'TRUE'
 
 # organization_validation.verify_org_email:
 #   path: '/verify-organisation-email/{uid}/{timestamp}/{hash}'
@@ -73,7 +77,7 @@ organization_validation.approve_ownership:
     _title: "Approve Ownership Request"
   requirements:
     _permission: "access content"
-    # _user_is_logged_in: 'TRUE'  # Only allow logged-in users
+    _user_is_logged_in: 'TRUE'
 
 organization_validation.confirmation_page:
   path: "/organization-validation/confirmation"

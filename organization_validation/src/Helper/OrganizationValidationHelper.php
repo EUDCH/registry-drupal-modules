@@ -46,23 +46,30 @@ class OrganizationValidationHelper {
       // If (!empty($country)) {
       //     $or_group->condition('field_country', $country, 'LIKE');
       // }.
+      // Escape the LIKE wildcards ('%', '_') in every user-supplied value so they match
+      // literally. Without this, a value such as "%" turns the suffix match into "match
+      // anything". The org-name field is user-editable, so an unescaped "%" makes this
+      // return every node in the selected country instead of real matches. The sibling
+      // organization_listing module already escapes its search term the same way.
+      $db = \Drupal::database();
+
       // ✅ Match Web Address.
       if (!empty($web_address)) {
-        $or_group->condition('field_ipsp_website_url', '%' . $web_address, 'LIKE');
+        $or_group->condition('field_ipsp_website_url', '%' . $db->escapeLike($web_address), 'LIKE');
       }
 
       // ✅ Match Email Domain against `field_ipsp_contact_email`
       $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', $type);
       if (isset($field_definitions['field_ipsp_contact_email'])) {
-        $or_group->condition('field_ipsp_contact_email', '%' . $email_domain, 'LIKE');
+        $or_group->condition('field_ipsp_contact_email', '%' . $db->escapeLike($email_domain), 'LIKE');
       }
 
       // ✅ Match Organisation Name
       if (isset($field_definitions['field_ipsp_name'])) {
-        $or_group->condition('field_ipsp_name', '%' . $org_name, 'LIKE');
+        $or_group->condition('field_ipsp_name', '%' . $db->escapeLike($org_name), 'LIKE');
       }
       if (isset($field_definitions['field_ipsp_name_en'])) {
-        $or_group->condition('field_ipsp_name_en', '%' . $org_name, 'LIKE');
+        $or_group->condition('field_ipsp_name_en', '%' . $db->escapeLike($org_name), 'LIKE');
       }
 
       // ✅ Apply OR conditions
