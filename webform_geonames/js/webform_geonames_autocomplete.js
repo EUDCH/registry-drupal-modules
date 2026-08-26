@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country_code=${encodeURIComponent(countryCode)}`;
+    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country=${encodeURIComponent(countryCode)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch");
@@ -37,22 +37,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Handle country selection change
-  function handleCountryChange(event) {
-    const selectedCountry = event.target.value;
-
+  // Handle country selection change: clear the city field so a stale city from a
+  // previous country cannot be submitted.
+  function handleCountryChange() {
     document.querySelectorAll(".webform-city-autocomplete").forEach(input => {
-      input.setAttribute("data-country-code", selectedCountry);
-      input.value = ""; // Clear city field
+      input.value = "";
       hideSuggestions(input);
     });
   }
 
-  // The selected country name is sent straight to the server, which resolves it
-  // to an ISO code via Drupal's country list. No third-party lookup: the previous
-  // restcountries.com/v3.1 call was retired and is CORS-blocked, which is why the
-  // autocomplete had stopped working. Kept async so existing await/.then callers
-  // are unaffected.
+  // Returns the selected country name; the server resolves it to an ISO code.
+  // Kept async because the callers use await and .then.
   async function getCountryCode() {
     return countryField ? countryField.value : null;
   }
@@ -86,7 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (filteredCities.length > 0) {
       filteredCities.forEach(city => {
         const suggestionItem = document.createElement("div");
-        suggestionItem.innerHTML = `<strong>${city.label}</strong><br><small>${city.details}</small>`;
+        // Build with textContent, not innerHTML: city.label/details come from the
+        // Geonames response (another organisation's editable database), so they
+        // must not be interpolated into markup.
+        const nameEl = document.createElement("strong");
+        nameEl.textContent = city.label;
+        const detailsEl = document.createElement("small");
+        detailsEl.textContent = city.details;
+        suggestionItem.append(nameEl, document.createElement("br"), detailsEl);
         suggestionItem.style.padding = "8px";
         suggestionItem.style.cursor = "pointer";
         suggestionItem.style.transition = "background-color 0.2s ease";

@@ -4,6 +4,18 @@ All notable changes to this repository are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- fix: restore the city autocomplete on the organisation registration form (`webform_geonames`). It resolved the selected country name to a code via the retired `restcountries.com/v3.1` API (removed, CORS-blocked), so no suggestions appeared. The country code is now resolved from Drupal core's `country_manager`, dropping the third-party dependency.
+
+### Added
+
+- feat: attach the city autocomplete to the organisation submission **edit** form too, not only the add form (`webform_geonames`).
+
+### Changed
+
+- refactor: `webform_geonames` now logs on every failure path (unresolved country, Geonames `status` error object, transport error) instead of returning an empty result silently.
+
 ## [1.3.0] – Drupal 11 compatibility declared
 
 ### Added
