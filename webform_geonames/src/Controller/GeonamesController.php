@@ -38,6 +38,9 @@ class GeonamesController {
     }
 
     // OPERAS-owned geonames account (replaces the former shared jmartinos one).
+    // Hardcoded and public, and geonames quota is per-username: if a third party
+    // burns it, the autocomplete empties (same symptom as the intermittence note
+    // below). Recovery: register a new geonames account and swap the value here.
     $username = 'bgrenier_operas';
 
     // secure.geonames.org is geonames' documented HTTPS endpoint
