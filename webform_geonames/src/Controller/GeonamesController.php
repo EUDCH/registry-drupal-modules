@@ -19,7 +19,9 @@ class GeonamesController {
     // option set is keyed by name, not ISO code). Accept a clear `country`
     // parameter and fall back to the legacy `country_code` name.
     $query = $request->query->get('query');
-    $country = $request->query->get('country') ?? $request->query->get('country_code');
+    // `?:` not `??`: fall back to the legacy parameter when `country` is absent
+    // OR an empty string, not only when it is null.
+    $country = $request->query->get('country') ?: $request->query->get('country_code');
 
     // Validate input.
     if (empty($query) || empty($country)) {
