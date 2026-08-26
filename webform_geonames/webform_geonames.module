@@ -9,8 +9,15 @@ function webform_geonames_form_alter(&$form, FormStateInterface $form_state, $fo
   // Log that the hook is triggered.
   \Drupal::logger('webform_geonames')->debug('webform_geonames_form_alter triggered for form_id: @form_id', ['@form_id' => $form_id]);
 
-  // Check if the form ID matches the Webform submission form you are targeting.
-  if ($form_id === 'webform_submission_organisation_registry_add_form') {
+  // Attach on both the add and edit submission forms of organisation_registry,
+  // so the city autocomplete works when an organisation is created and when an
+  // existing one is edited (editing is exactly where a stale manual city entry
+  // would otherwise slip in).
+  $target_forms = [
+    'webform_submission_organisation_registry_add_form',
+    'webform_submission_organisation_registry_edit_form',
+  ];
+  if (in_array($form_id, $target_forms, TRUE)) {
     // Ensure #attached['library'] is initialized as an array.
     if (!isset($form['#attached']['library']) || !is_array($form['#attached']['library'])) {
       $form['#attached']['library'] = [];
