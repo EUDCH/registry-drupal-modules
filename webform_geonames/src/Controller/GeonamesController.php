@@ -43,6 +43,10 @@ class GeonamesController {
     // shared account; replacing it (with config + HTTPS) is tracked in issue #61.
     $username = 'jmartinos';
 
+    // Plain http:// is deliberate: geonames has no reliable free-tier HTTPS.
+    // secure.geonames.org rejects free credentials with "premium required"
+    // (geonames forum threads 35422 and 39842), so a keyless account must use
+    // http; revisit if the account moves to premium (tracked in #61).
     // http_build_query encodes each value, so a free-text city query cannot
     // break out of the query string.
     $url = 'http://api.geonames.org/searchJSON?' . http_build_query([

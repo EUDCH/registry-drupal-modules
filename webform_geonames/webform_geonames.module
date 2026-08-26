@@ -6,8 +6,9 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_form_alter().
  */
 function webform_geonames_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Log that the hook is triggered.
-  \Drupal::logger('webform_geonames')->debug('webform_geonames_form_alter triggered for form_id: @form_id', ['@form_id' => $form_id]);
+  // Debug aid for wiring form ids (e.g. finding a submission form's id). Debug
+  // level, so it is filtered out in production and costs nothing there.
+  \Drupal::logger('webform_geonames')->debug('form_alter fired for form_id: @form_id', ['@form_id' => $form_id]);
 
   // Attach on both the add and edit submission forms of organisation_registry,
   // so the city autocomplete works when an organisation is created and when an
@@ -26,7 +27,8 @@ function webform_geonames_form_alter(&$form, FormStateInterface $form_state, $fo
     // Attach the JavaScript library to the form.
     $form['#attached']['library'][] = 'webform_geonames/autocomplete';
 
-    // Log that the library has been attached.
-    \Drupal::logger('webform_geonames')->notice('Library "webform_geonames/autocomplete" attached to the form.');
+    // Debug, not notice: useful when diagnosing a non-loading autocomplete, but
+    // not worth a production log entry on every render of these forms.
+    \Drupal::logger('webform_geonames')->debug('Attached webform_geonames/autocomplete to @form_id.', ['@form_id' => $form_id]);
   }
 }

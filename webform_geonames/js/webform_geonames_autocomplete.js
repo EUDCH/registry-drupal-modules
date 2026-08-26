@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchCities(event) {
     const cityField = event.target;
     const city = cityField.value.trim();
-    const countryCode = await getCountryCode();
-    if (!countryCode || !city) {
+    const country = await getCountryCode();
+    if (!country || !city) {
       hideSuggestions(cityField);
       return;
     }
 
-    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country=${encodeURIComponent(countryCode)}`;
+    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch");
@@ -136,8 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleCityFocus(event) {
     const cityField = event.target;
     const city = cityField.value;
-    getCountryCode().then(countryCode => {
-      if (city && countryCode) {
+    getCountryCode().then(country => {
+      if (city && country) {
         fetchCities({ target: cityField });
       }
     });
