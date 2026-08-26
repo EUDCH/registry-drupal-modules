@@ -40,9 +40,11 @@ class GeonamesController {
     // OPERAS-owned geonames account (replaces the former shared jmartinos one).
     $username = 'bgrenier_operas';
 
-    // secure.geonames.org is geonames' documented HTTPS endpoint (free; geonames
-    // forum thread 39842); api.geonames.org is the HTTP one. http_build_query
-    // encodes each value, so the free-text query cannot break out.
+    // secure.geonames.org is geonames' documented HTTPS endpoint
+    // (geonames.org/export/web-services.html); it serves free accounts
+    // (maintainer, forum 39842) but has intermittently demanded premium — the
+    // re-check trigger if autocomplete empties. http_build_query encodes each
+    // value, so the free-text query cannot break out.
     $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'q' => $query,
       'maxRows' => 200,
