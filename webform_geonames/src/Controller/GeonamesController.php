@@ -126,7 +126,7 @@ class GeonamesController {
     $normalize = static function (string $s): string {
       // Decode HTML entities first: a client could send an escaped "&amp;",
       // which would otherwise miss the "&" -> "and" folding below.
-      $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5);
+      $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
       $s = str_replace('&', 'and', mb_strtolower($s));
       return preg_replace('/\s+/', ' ', trim($s));
     };
