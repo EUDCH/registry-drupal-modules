@@ -40,11 +40,9 @@ class GeonamesController {
     // OPERAS-owned geonames account (replaces the former shared jmartinos one).
     $username = 'bgrenier_operas';
 
-    // secure.geonames.org is geonames' TLS endpoint. Plain api.geonames.org has
-    // a TLS listener too, but serves certs that fail verification for that host
-    // (one valid only for secure.geonames.org, one long-expired unrelated cert),
-    // so HTTPS must target secure.geonames.org. http_build_query encodes each
-    // value, so the free-text query cannot break out.
+    // secure.geonames.org is geonames' documented HTTPS endpoint (free; geonames
+    // forum thread 39842); api.geonames.org is the HTTP one. http_build_query
+    // encodes each value, so the free-text query cannot break out.
     $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'q' => $query,
       'maxRows' => 200,
