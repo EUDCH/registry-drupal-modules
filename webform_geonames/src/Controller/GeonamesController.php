@@ -15,8 +15,9 @@ class GeonamesController {
    * Callback for Geonames autocomplete.
    */
   public function autocomplete(Request $request) {
-    // The country arrives as a NAME (era_country_names is keyed by name); accept
-    // `country`, fall back to legacy `country_code`. `?:` also falls back on ''.
+    // The country arrives as a NAME (era_country_names is keyed by name), so
+    // accept `country`, fall back to legacy `country_code`. `?:` not `??` so an
+    // empty `country` also falls back, not only a null one.
     $query = $request->query->get('query');
     $country = $request->query->get('country') ?: $request->query->get('country_code');
 
@@ -28,19 +29,21 @@ class GeonamesController {
     // already-ISO2 value passes through.
     $country_code = $this->resolveCountryCode((string) $country);
     if (!$country_code) {
-      // Log rather than fail silently: an unresolved country looks identical to a
-      // zero-match search, and that silence is what hid the original breakage.
+      // Log rather than fail silently: an unresolved country looks identical
+      // to a zero-match search, and that silence hid the original breakage.
       \Drupal::logger('webform_geonames')->warning('Could not resolve country to an ISO code: @country', ['@country' => $country]);
       return new JsonResponse([]);
     }
 
-    // Hardcoded and public; geonames quota is per-username, so a third party can
-    // burn it and empty the autocomplete. Recovery: register a new account, swap here.
+    // OPERAS-owned account. Hardcoded and public, and geonames quota is
+    // per-username, so a third party can burn it and empty the autocomplete.
+    // Recovery: register a new geonames account and swap the value here.
     $username = 'bgrenier_operas';
 
-    // secure.geonames.org is geonames' documented HTTPS endpoint (web-services.html);
-    // it serves free accounts but has intermittently demanded premium (forum 39842),
-    // the re-check trigger if autocomplete empties. http_build_query encodes safely.
+    // secure.geonames.org is geonames' documented HTTPS endpoint
+    // (web-services.html); free, but has intermittently demanded premium
+    // (forum 39842) — the re-check trigger if autocomplete empties.
+    // http_build_query encodes each value, so $query cannot break out.
     $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'q' => $query,
       'maxRows' => 200,
@@ -60,8 +63,8 @@ class GeonamesController {
         return new JsonResponse([]);
       }
 
-      // Geonames signals quota / invalid-username / disabled-account as HTTP 200
-      // with a `status` error object (not a non-2xx), so the catch never sees it.
+      // Geonames signals quota, invalid username or disabled account as HTTP
+      // 200 with a `status` object (not a non-2xx), so the catch never sees it.
       if (isset($data['status'])) {
         \Drupal::logger('webform_geonames')->error('Geonames returned an error: @message', ['@message' => $data['status']['message'] ?? 'unknown']);
         return new JsonResponse([]);
@@ -118,7 +121,7 @@ class GeonamesController {
     $target = $normalize($value);
     foreach ($list as $code => $name) {
       $candidates = [(string) $name];
-      // hook_countries_alter() can replace a name with a plain string, so guard.
+      // hook_countries_alter() can swap a name for a plain string, so guard.
       if ($name instanceof TranslatableMarkup) {
         $candidates[] = $name->getUntranslatedString();
       }
