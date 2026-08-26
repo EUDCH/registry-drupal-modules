@@ -85,7 +85,9 @@ class GeonamesController {
       return new JsonResponse($cities);
     }
     catch (\Exception $e) {
-      \Drupal::logger('webform_geonames')->error('Geonames request failed: @message', ['@message' => $e->getMessage()]);
+      // Log the class and code, not getMessage(): a Guzzle request-exception
+      // message embeds the full URL (shared username + user-typed city).
+      \Drupal::logger('webform_geonames')->error('Geonames request failed: @type (@code)', ['@type' => get_class($e), '@code' => $e->getCode()]);
       return new JsonResponse([]);
     }
   }
@@ -114,8 +116,9 @@ class GeonamesController {
       // which would otherwise miss the "&" -> "and" folding below.
       $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
       $s = str_replace('&', 'and', mb_strtolower($s));
-      // preg_replace is string|null; the ?? keeps the declared string return.
-      return preg_replace('/\s+/', ' ', trim($s)) ?? '';
+      // /u collapses the Unicode whitespace html_entity_decode() can yield;
+      // ?? '' keeps the string return on /u's NULL for malformed UTF-8.
+      return preg_replace('/\s+/u', ' ', trim($s)) ?? '';
     };
     $target = $normalize($value);
     foreach ($list as $code => $name) {
