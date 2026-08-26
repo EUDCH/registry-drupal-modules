@@ -14,7 +14,7 @@ All notable changes to this repository are documented here.
 
 ### Changed
 
-- refactor: `webform_geonames` now logs on every failure path (unresolved country, Geonames `status` error object, transport error) instead of returning an empty result silently.
+- refactor: `webform_geonames` now logs on every failure path (unresolved country, Geonames `status` error object, non-JSON response body, transport error) instead of returning an empty result silently.
 
 ## [1.3.0] – Drupal 11 compatibility declared
 

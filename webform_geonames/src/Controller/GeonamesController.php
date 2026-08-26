@@ -64,6 +64,13 @@ class GeonamesController {
       $response = \Drupal::httpClient()->get($url);
       $data = json_decode($response->getBody(), TRUE);
 
+      // A malformed or non-JSON body still arrives as HTTP 200, so the catch
+      // never sees it; decode failure would otherwise be another silent [].
+      if (!is_array($data)) {
+        \Drupal::logger('webform_geonames')->error('Geonames returned a non-JSON response.');
+        return new JsonResponse([]);
+      }
+
       // Geonames signals quota exhaustion, an invalid username or a disabled
       // account as HTTP 200 with a `status` error object, not a non-2xx status,
       // so the catch below never sees it. Detect and log it, otherwise it is
@@ -117,6 +124,9 @@ class GeonamesController {
     }
 
     $normalize = static function (string $s): string {
+      // Decode HTML entities first: a client could send an escaped "&amp;",
+      // which would otherwise miss the "&" -> "and" folding below.
+      $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5);
       $s = str_replace('&', 'and', mb_strtolower($s));
       return preg_replace('/\s+/', ' ', trim($s));
     };
