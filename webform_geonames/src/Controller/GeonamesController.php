@@ -37,14 +37,13 @@ class GeonamesController {
       return new JsonResponse([]);
     }
 
-    // Environment-specific shared account; replacing it (config + HTTPS) is #61.
-    $username = 'jmartinos';
+    // OPERAS-owned geonames account (replaces the former shared jmartinos one).
+    $username = 'bgrenier_operas';
 
-    // http:// today: api.geonames.org has no TLS listener. secure.geonames.org
-    // does serve this account for free, but has intermittently demanded premium
-    // in the past, so the endpoint move is bundled with the account swap in #61.
-    // http_build_query encodes each value, so the free-text query cannot break out.
-    $url = 'http://api.geonames.org/searchJSON?' . http_build_query([
+    // secure.geonames.org is the TLS endpoint (api.geonames.org has no TLS
+    // listener at all); it serves this free account over HTTPS. http_build_query
+    // encodes each value, so the free-text query cannot break out.
+    $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'q' => $query,
       'maxRows' => 200,
       'country' => $country_code,
