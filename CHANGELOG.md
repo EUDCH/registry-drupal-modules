@@ -15,6 +15,7 @@ All notable changes to this repository are documented here.
 ### Changed
 
 - refactor: `webform_geonames` now logs on every failure path (unresolved country, Geonames `status` error object, non-JSON response body, transport error) instead of returning an empty result silently.
+- fix: the `webform_geonames` form_alter no longer writes a debug `watchdog` entry on every form build site-wide; the diagnostic log is gated to the organisation_registry submission forms, so it can no longer evict real warnings/errors under the default `dblog` `row_limit`.
 
 ## [1.3.0] – Drupal 11 compatibility declared
 

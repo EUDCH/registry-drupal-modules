@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchCities(event) {
     const cityField = event.target;
     const city = cityField.value.trim();
-    const country = await getCountryCode();
+    const country = await getSelectedCountry();
     if (!country || !city) {
       hideSuggestions(cityField);
       return;
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Returns the selected country name; the server resolves it to an ISO code.
   // Kept async because the callers use await and .then.
-  async function getCountryCode() {
+  async function getSelectedCountry() {
     return countryField ? countryField.value : null;
   }
 
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleCityFocus(event) {
     const cityField = event.target;
     const city = cityField.value;
-    getCountryCode().then(country => {
+    getSelectedCountry().then(country => {
       if (city && country) {
         fetchCities({ target: cityField });
       }

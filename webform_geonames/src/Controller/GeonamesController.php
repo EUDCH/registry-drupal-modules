@@ -15,12 +15,10 @@ class GeonamesController {
    * Callback for Geonames autocomplete.
    */
   public function autocomplete(Request $request) {
-    // The form sends the selected country as a NAME (the era_country_names
-    // option set is keyed by name, not ISO code). Accept a clear `country`
-    // parameter and fall back to the legacy `country_code` name.
+    // The form sends the selected country as a NAME (era_country_names is keyed
+    // by name, not ISO code). Accept a `country` parameter, falling back to the
+    // legacy `country_code`. `?:` (not `??`) also falls back on an empty string.
     $query = $request->query->get('query');
-    // `?:` not `??`: fall back to the legacy parameter when `country` is absent
-    // OR an empty string, not only when it is null.
     $country = $request->query->get('country') ?: $request->query->get('country_code');
 
     // Validate input.
@@ -28,29 +26,24 @@ class GeonamesController {
       return new JsonResponse([]);
     }
 
-    // Geonames needs an ISO 3166-1 alpha-2 code. Resolve it from Drupal's own
-    // country list rather than a third-party service (the client used to call
-    // restcountries.com/v3.1, since removed and CORS-blocked). An already-ISO2
-    // value passes straight through.
+    // Resolve the country NAME to an ISO 3166-1 alpha-2 code from Drupal core's
+    // country list (the client used to call restcountries.com, since removed).
+    // An already-ISO2 value passes straight through.
     $country_code = $this->resolveCountryCode((string) $country);
     if (!$country_code) {
-      // Log rather than fail silently: an unresolved country returns the same
-      // empty result a genuine zero-match search does, and that indistinguishable
-      // silence is what let the previous breakage run unnoticed for months.
+      // Log rather than fail silently: an unresolved country is indistinguishable
+      // from a genuine zero-match search, and that silence hid the original breakage.
       \Drupal::logger('webform_geonames')->warning('Could not resolve country to an ISO code: @country', ['@country' => $country]);
       return new JsonResponse([]);
     }
 
-    // Geonames account. The username is environment-specific and currently a
-    // shared account; replacing it (with config + HTTPS) is tracked in issue #61.
+    // Environment-specific shared account; replacing it (config + HTTPS) is #61.
     $username = 'jmartinos';
 
-    // Plain http:// is deliberate: geonames has no reliable free-tier HTTPS.
-    // secure.geonames.org rejects free credentials with "premium required"
-    // (geonames forum threads 35422 and 39842), so a keyless account must use
-    // http; revisit if the account moves to premium (tracked in #61).
-    // http_build_query encodes each value, so a free-text city query cannot
-    // break out of the query string.
+    // http:// today: api.geonames.org has no TLS listener. secure.geonames.org
+    // does serve this account for free, but has intermittently demanded premium
+    // in the past, so the endpoint move is bundled with the account swap in #61.
+    // http_build_query encodes each value, so the free-text query cannot break out.
     $url = 'http://api.geonames.org/searchJSON?' . http_build_query([
       'q' => $query,
       'maxRows' => 200,
@@ -71,10 +64,8 @@ class GeonamesController {
         return new JsonResponse([]);
       }
 
-      // Geonames signals quota exhaustion, an invalid username or a disabled
-      // account as HTTP 200 with a `status` error object, not a non-2xx status,
-      // so the catch below never sees it. Detect and log it, otherwise it is
-      // just another silent empty result.
+      // Geonames signals quota / invalid-username / disabled-account as HTTP 200
+      // with a `status` error object (not a non-2xx), so the catch never sees it.
       if (isset($data['status'])) {
         \Drupal::logger('webform_geonames')->error('Geonames returned an error: @message', ['@message' => $data['status']['message'] ?? 'unknown']);
         return new JsonResponse([]);
@@ -100,23 +91,18 @@ class GeonamesController {
   }
 
   /**
-   * Resolve a country name to its ISO 3166-1 alpha-2 code.
+   * Resolve a country name to its ISO 3166-1 alpha-2 code via country_manager.
    *
-   * Uses Drupal core's country_manager as the source of truth. An input that is
-   * already a valid alpha-2 code is returned as-is. Name matching is tolerant of
-   * case, whitespace and "&" vs "and", because core spells several countries with
-   * "&" (Bosnia & Herzegovina, Trinidad & Tobago, and others) where an
-   * ISO-derived option set may use "and".
+   * Already-ISO2 input passes through. Name matching is tolerant of case,
+   * whitespace and "&" vs "and" (core spells several countries with "&").
    */
   protected function resolveCountryCode(string $value): ?string {
     $value = trim($value);
     if ($value === '') {
       return NULL;
     }
-    // [ISO2 => country name]. The names are TranslatableMarkup rendered in the
-    // request's interface language, so match against the untranslated (English)
-    // source string as well — otherwise a non-English UI language renders e.g.
-    // "Bosnie-Herzégovine" and nothing matches the English option set.
+    // Names are TranslatableMarkup in the UI language, so also match the
+    // untranslated (English) source — else a non-English UI breaks resolution.
     $list = \Drupal::service('country_manager')->getList();
 
     if (isset($list[strtoupper($value)])) {
@@ -128,7 +114,8 @@ class GeonamesController {
       // which would otherwise miss the "&" -> "and" folding below.
       $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
       $s = str_replace('&', 'and', mb_strtolower($s));
-      return preg_replace('/\s+/', ' ', trim($s));
+      // preg_replace is string|null; the ?? keeps the declared string return.
+      return preg_replace('/\s+/', ' ', trim($s)) ?? '';
     };
     $target = $normalize($value);
     foreach ($list as $code => $name) {
