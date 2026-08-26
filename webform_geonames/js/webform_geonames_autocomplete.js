@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchCities(event) {
     const cityField = event.target;
     const city = cityField.value.trim();
-    const countryCode = await getCountryCode();
-    if (!countryCode || !city) {
+    const country = await getSelectedCountry();
+    if (!country || !city) {
       hideSuggestions(cityField);
       return;
     }
 
-    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country_code=${countryCode}`;
+    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch");
@@ -37,36 +37,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Handle country selection change
-  async function handleCountryChange(event) {
-    const selectedCountry = event.target.value;
-    const countryCode = await fetchCountryCode(selectedCountry);
-
+  // Handle country selection change: clear the city field so a stale city from a
+  // previous country cannot be submitted.
+  function handleCountryChange() {
     document.querySelectorAll(".webform-city-autocomplete").forEach(input => {
-      input.setAttribute("data-country-code", countryCode);
-      input.value = ""; // Clear city field
+      input.value = "";
       hideSuggestions(input);
     });
   }
 
-  // Fetch country code from API
-  async function fetchCountryCode(countryName) {
-    const formattedCountryName = countryName.replace(/ /g, "%20");
-    const url = `https://restcountries.com/v3.1/name/${formattedCountryName}`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Failed to fetch country code");
-      const data = await response.json();
-      return data[0]?.cca2 || null;
-    } catch (error) {
-      console.error("Error fetching country code:", error);
-      return null;
-    }
-  }
-
-  // Get country code based on selected country
-  async function getCountryCode() {
-    return countryField ? await fetchCountryCode(countryField.value) : null;
+  // Returns the selected country name; the server resolves it to an ISO code.
+  // Kept async because the callers use await and .then.
+  async function getSelectedCountry() {
+    return countryField ? countryField.value : null;
   }
 
   // Render city suggestions dropdown
@@ -98,7 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (filteredCities.length > 0) {
       filteredCities.forEach(city => {
         const suggestionItem = document.createElement("div");
-        suggestionItem.innerHTML = `<strong>${city.label}</strong><br><small>${city.details}</small>`;
+        // Build with textContent, not innerHTML: city.label/details come from the
+        // Geonames response (another organisation's editable database), so they
+        // must not be interpolated into markup.
+        const nameEl = document.createElement("strong");
+        nameEl.textContent = city.label;
+        const detailsEl = document.createElement("small");
+        detailsEl.textContent = city.details;
+        suggestionItem.append(nameEl, document.createElement("br"), detailsEl);
         suggestionItem.style.padding = "8px";
         suggestionItem.style.cursor = "pointer";
         suggestionItem.style.transition = "background-color 0.2s ease";
@@ -146,8 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleCityFocus(event) {
     const cityField = event.target;
     const city = cityField.value;
-    getCountryCode().then(countryCode => {
-      if (city && countryCode) {
+    getSelectedCountry().then(country => {
+      if (city && country) {
         fetchCities({ target: cityField });
       }
     });
