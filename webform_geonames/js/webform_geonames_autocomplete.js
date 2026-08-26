@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country_code=${countryCode}`;
+    const url = `/webform-geonames/autocomplete?query=${encodeURIComponent(city)}&country_code=${encodeURIComponent(countryCode)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch");
@@ -38,35 +38,23 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Handle country selection change
-  async function handleCountryChange(event) {
+  function handleCountryChange(event) {
     const selectedCountry = event.target.value;
-    const countryCode = await fetchCountryCode(selectedCountry);
 
     document.querySelectorAll(".webform-city-autocomplete").forEach(input => {
-      input.setAttribute("data-country-code", countryCode);
+      input.setAttribute("data-country-code", selectedCountry);
       input.value = ""; // Clear city field
       hideSuggestions(input);
     });
   }
 
-  // Fetch country code from API
-  async function fetchCountryCode(countryName) {
-    const formattedCountryName = countryName.replace(/ /g, "%20");
-    const url = `https://restcountries.com/v3.1/name/${formattedCountryName}`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Failed to fetch country code");
-      const data = await response.json();
-      return data[0]?.cca2 || null;
-    } catch (error) {
-      console.error("Error fetching country code:", error);
-      return null;
-    }
-  }
-
-  // Get country code based on selected country
+  // The selected country name is sent straight to the server, which resolves it
+  // to an ISO code via Drupal's country list. No third-party lookup: the previous
+  // restcountries.com/v3.1 call was retired and is CORS-blocked, which is why the
+  // autocomplete had stopped working. Kept async so existing await/.then callers
+  // are unaffected.
   async function getCountryCode() {
-    return countryField ? await fetchCountryCode(countryField.value) : null;
+    return countryField ? countryField.value : null;
   }
 
   // Render city suggestions dropdown
