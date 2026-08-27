@@ -15,36 +15,36 @@ class GeonamesController {
    * Callback for Geonames autocomplete.
    */
   public function autocomplete(Request $request) {
-    // The form sends the selected country as a NAME (era_country_names is keyed
-    // by name, not ISO code). Accept a `country` parameter, falling back to the
-    // legacy `country_code`. `?:` (not `??`) also falls back on an empty string.
+    // The country arrives as a NAME (era_country_names is keyed by name), so
+    // accept `country`, fall back to legacy `country_code`. `?:` not `??` so an
+    // empty `country` also falls back, not only a null one.
     $query = $request->query->get('query');
     $country = $request->query->get('country') ?: $request->query->get('country_code');
 
-    // Validate input.
     if (empty($query) || empty($country)) {
       return new JsonResponse([]);
     }
 
-    // Resolve the country NAME to an ISO 3166-1 alpha-2 code from Drupal core's
-    // country list (the client used to call restcountries.com, since removed).
-    // An already-ISO2 value passes straight through.
+    // Resolve the country NAME to an ISO alpha-2 code via Drupal core; an
+    // already-ISO2 value passes through.
     $country_code = $this->resolveCountryCode((string) $country);
     if (!$country_code) {
-      // Log rather than fail silently: an unresolved country is indistinguishable
-      // from a genuine zero-match search, and that silence hid the original breakage.
+      // Log rather than fail silently: an unresolved country looks identical
+      // to a zero-match search, and that silence hid the original breakage.
       \Drupal::logger('webform_geonames')->warning('Could not resolve country to an ISO code: @country', ['@country' => $country]);
       return new JsonResponse([]);
     }
 
-    // Environment-specific shared account; replacing it (config + HTTPS) is #61.
-    $username = 'jmartinos';
+    // OPERAS-owned account. Hardcoded and public, and geonames quota is
+    // per-username, so a third party can burn it and empty the autocomplete.
+    // Recovery: register a new geonames account and swap the value here.
+    $username = 'bgrenier_operas';
 
-    // http:// today: api.geonames.org has no TLS listener. secure.geonames.org
-    // does serve this account for free, but has intermittently demanded premium
-    // in the past, so the endpoint move is bundled with the account swap in #61.
-    // http_build_query encodes each value, so the free-text query cannot break out.
-    $url = 'http://api.geonames.org/searchJSON?' . http_build_query([
+    // secure.geonames.org is geonames' documented HTTPS endpoint
+    // (web-services.html); free, but has intermittently demanded premium
+    // (forum 39842) — the re-check trigger if autocomplete empties.
+    // http_build_query encodes each value, so $query cannot break out.
+    $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'q' => $query,
       'maxRows' => 200,
       'country' => $country_code,
@@ -53,25 +53,23 @@ class GeonamesController {
       'fuzzy' => 0.5,
     ]);
     try {
-      // Make the API request.
       $response = \Drupal::httpClient()->get($url);
       $data = json_decode($response->getBody(), TRUE);
 
-      // A malformed or non-JSON body still arrives as HTTP 200, so the catch
-      // never sees it; decode failure would otherwise be another silent [].
+      // A non-JSON body still arrives as HTTP 200 (the catch never sees it), so
+      // guard decode failure explicitly — otherwise another silent [].
       if (!is_array($data)) {
         \Drupal::logger('webform_geonames')->error('Geonames returned a non-JSON response.');
         return new JsonResponse([]);
       }
 
-      // Geonames signals quota / invalid-username / disabled-account as HTTP 200
-      // with a `status` error object (not a non-2xx), so the catch never sees it.
+      // Geonames signals quota, invalid username or disabled account as HTTP
+      // 200 with a `status` object (not a non-2xx), so the catch never sees it.
       if (isset($data['status'])) {
         \Drupal::logger('webform_geonames')->error('Geonames returned an error: @message', ['@message' => $data['status']['message'] ?? 'unknown']);
         return new JsonResponse([]);
       }
 
-      // Process the Geonames API response.
       $cities = [];
       if (!empty($data['geonames'])) {
         foreach ($data['geonames'] as $city) {
@@ -86,7 +84,7 @@ class GeonamesController {
     }
     catch (\Exception $e) {
       // Log the class and code, not getMessage(): a Guzzle request-exception
-      // message embeds the full URL (shared username + user-typed city).
+      // message embeds the full URL (username + user-typed city).
       \Drupal::logger('webform_geonames')->error('Geonames request failed: @type (@code)', ['@type' => get_class($e), '@code' => $e->getCode()]);
       return new JsonResponse([]);
     }
@@ -123,7 +121,7 @@ class GeonamesController {
     $target = $normalize($value);
     foreach ($list as $code => $name) {
       $candidates = [(string) $name];
-      // hook_countries_alter() can replace a name with a plain string, so guard.
+      // hook_countries_alter() can swap a name for a plain string, so guard.
       if ($name instanceof TranslatableMarkup) {
         $candidates[] = $name->getUntranslatedString();
       }

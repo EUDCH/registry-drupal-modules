@@ -14,6 +14,7 @@ All notable changes to this repository are documented here.
 
 ### Changed
 
+- change: `webform_geonames` now calls geonames over HTTPS (`https://secure.geonames.org`) using an OPERAS-owned account, replacing the plain-`http://` call on the former shared `jmartinos` account. No behaviour change for users; removes the third-party account dependency and the plaintext hop.
 - refactor: `webform_geonames` now logs on every failure path (unresolved country, Geonames `status` error object, non-JSON response body, transport error) instead of returning an empty result silently.
 - fix: the `webform_geonames` form_alter no longer writes a debug `watchdog` entry on every form build site-wide; the diagnostic log is gated to the organisation_registry submission forms, so it can no longer evict real warnings/errors under the default `dblog` `row_limit`.
 
