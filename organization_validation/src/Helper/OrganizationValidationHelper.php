@@ -32,6 +32,14 @@ class OrganizationValidationHelper {
     // ✅ Extract email domain
     $email_domain = substr(strrchr($email, '@'), 1);
 
+    // Escape LIKE wildcards (%, _, \) in the user-controlled values so they match
+    // literally; the leading '%' added below stays an intentional wildcard.
+    // Without this, a '%' in a user's org name or web address matches everything.
+    $database = \Drupal::database();
+    $web_like = '%' . $database->escapeLike($web_address);
+    $email_like = '%' . $database->escapeLike($email_domain);
+    $org_like = '%' . $database->escapeLike($org_name);
+
     // ✅ Search both `organization` and `organisations`
     $types = ['organisation', 'organisations'];
     $matching_organisations = [];
@@ -48,21 +56,21 @@ class OrganizationValidationHelper {
       // }.
       // ✅ Match Web Address.
       if (!empty($web_address)) {
-        $or_group->condition('field_ipsp_website_url', '%' . $web_address, 'LIKE');
+        $or_group->condition('field_ipsp_website_url', $web_like, 'LIKE');
       }
 
       // ✅ Match Email Domain against `field_ipsp_contact_email`
       $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', $type);
       if (isset($field_definitions['field_ipsp_contact_email'])) {
-        $or_group->condition('field_ipsp_contact_email', '%' . $email_domain, 'LIKE');
+        $or_group->condition('field_ipsp_contact_email', $email_like, 'LIKE');
       }
 
       // ✅ Match Organisation Name
       if (isset($field_definitions['field_ipsp_name'])) {
-        $or_group->condition('field_ipsp_name', '%' . $org_name, 'LIKE');
+        $or_group->condition('field_ipsp_name', $org_like, 'LIKE');
       }
       if (isset($field_definitions['field_ipsp_name_en'])) {
-        $or_group->condition('field_ipsp_name_en', '%' . $org_name, 'LIKE');
+        $or_group->condition('field_ipsp_name_en', $org_like, 'LIKE');
       }
 
       // ✅ Apply OR conditions

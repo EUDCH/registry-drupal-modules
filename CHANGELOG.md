@@ -6,6 +6,7 @@ All notable changes to this repository are documented here.
 
 ### Fixed
 
+- fix: `organization_validation` now escapes LIKE wildcards (`%`, `_`, `\`) in the user-controlled values used by `findMatchingOrganisations`, so a wildcard in a registering user's org name, web address or email domain can no longer over-match organisations. Not SQL injection (the entity query is parameterized), but the wildcards were interpreted as LIKE patterns.
 - fix: the `webform_geonames` autocomplete endpoint now trims its input and rejects whitespace-only values, so an unauthenticated caller can no longer generate `watchdog` warning rows by sending a whitespace-only country.
 - fix: restore the city autocomplete on the organisation registration form (`webform_geonames`). It resolved the selected country name to a code via the retired `restcountries.com/v3.1` API (removed, CORS-blocked), so no suggestions appeared. The country code is now resolved from Drupal core's `country_manager`, dropping the third-party dependency.
 
