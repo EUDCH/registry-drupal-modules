@@ -4,6 +4,8 @@ All notable changes to this repository are documented here.
 
 ## [Unreleased]
 
+## [1.4.0] – Restore the city autocomplete and harden queries
+
 ### Fixed
 
 - fix: `organization_validation` now escapes LIKE wildcards (`%`, `_`, `\`) in the user-controlled values used by `findMatchingOrganisations`, so a wildcard in a registering user's org name, web address or email domain can no longer over-match organisations. Not SQL injection (the entity query is parameterized), but the wildcards were interpreted as LIKE patterns.
