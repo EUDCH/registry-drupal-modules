@@ -6,6 +6,7 @@ All notable changes to this repository are documented here.
 
 ### Fixed
 
+- fix: the `webform_geonames` autocomplete endpoint now trims its input and rejects whitespace-only values, so an unauthenticated caller can no longer generate `watchdog` warning rows by sending a whitespace-only country.
 - fix: restore the city autocomplete on the organisation registration form (`webform_geonames`). It resolved the selected country name to a code via the retired `restcountries.com/v3.1` API (removed, CORS-blocked), so no suggestions appeared. The country code is now resolved from Drupal core's `country_manager`, dropping the third-party dependency.
 
 ### Added

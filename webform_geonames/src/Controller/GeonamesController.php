@@ -16,12 +16,17 @@ class GeonamesController {
    */
   public function autocomplete(Request $request) {
     // The country arrives as a NAME (era_country_names is keyed by name), so
-    // accept `country`, fall back to legacy `country_code`. `?:` not `??` so an
-    // empty `country` also falls back, not only a null one.
-    $query = $request->query->get('query');
-    $country = $request->query->get('country') ?: $request->query->get('country_code');
+    // accept `country`, falling back to the legacy `country_code`. Trim each
+    // (Unicode-aware /u — trim() is ASCII-only and would miss U+00A0 etc.)
+    // BEFORE the fallback, so a whitespace-only `country` still yields to
+    // `country_code` rather than winning the ?: and being dropped.
+    $trim = static fn ($v): string => preg_replace('/^\s+|\s+$/u', '', (string) $v) ?? '';
+    $query = $trim($request->query->get('query'));
+    $country = $trim($request->query->get('country')) ?: $trim($request->query->get('country_code'));
 
-    if (empty($query) || empty($country)) {
+    // Reject empty and whitespace-only input: otherwise it reaches
+    // resolveCountryCode(), fails to resolve, and logs a warning on every call.
+    if ($query === '' || $country === '') {
       return new JsonResponse([]);
     }
 
