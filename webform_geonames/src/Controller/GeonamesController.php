@@ -18,12 +18,14 @@ class GeonamesController {
     // The country arrives as a NAME (era_country_names is keyed by name), so
     // accept `country`, fall back to legacy `country_code`. `?:` not `??` so an
     // empty `country` also falls back, not only a null one.
-    $query = trim((string) $request->query->get('query'));
-    $country = trim((string) ($request->query->get('country') ?: $request->query->get('country_code')));
+    // Unicode-aware trim (/u): trim() strips ASCII whitespace only, so a
+    // non-breaking space (U+00A0) would survive and still reach the warning
+    // below — that is a whitespace-only country too.
+    $query = preg_replace('/^\s+|\s+$/u', '', (string) $request->query->get('query')) ?? '';
+    $country = preg_replace('/^\s+|\s+$/u', '', (string) ($request->query->get('country') ?: $request->query->get('country_code'))) ?? '';
 
-    // Reject empty and whitespace-only input: a whitespace-only country would
-    // otherwise reach resolveCountryCode(), fail to resolve, and log a warning
-    // on every unauthenticated call.
+    // Reject empty and whitespace-only input: otherwise it reaches
+    // resolveCountryCode(), fails to resolve, and logs a warning on every call.
     if ($query === '' || $country === '') {
       return new JsonResponse([]);
     }
