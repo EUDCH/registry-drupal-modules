@@ -49,13 +49,13 @@ class GeonamesController {
     // (web-services.html); free, but has intermittently demanded premium
     // (forum 39842) — the re-check trigger if autocomplete empties.
     // http_build_query encodes each value, so $query cannot break out.
+    // name_startsWith is geonames' prefix-autocomplete parameter.
     $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
-      'q' => $query,
+      'name_startsWith' => $query,
       'maxRows' => 200,
       'country' => $country_code,
       'username' => $username,
       'featureClass' => 'P',
-      'fuzzy' => 0.5,
     ]);
     try {
       $response = \Drupal::httpClient()->get($url);
@@ -78,9 +78,13 @@ class GeonamesController {
       $cities = [];
       if (!empty($data['geonames'])) {
         foreach ($data['geonames'] as $city) {
+          // Store toponymName — geonames' single main name for the place (the
+          // common English exonym where one exists: Brussels, Munich; else the
+          // local name). `name` under name_startsWith echoes the typed variant.
+          $name = $city['toponymName'] ?? $city['name'];
           $cities[] = [
-            'value' => $city['name'],
-            'label' => $city['name'] . ', ' . $city['adminName1'] . ', ' . $city['countryName'],
+            'value' => $name,
+            'label' => $name . ', ' . $city['adminName1'] . ', ' . $city['countryName'],
           ];
         }
       }
