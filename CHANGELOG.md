@@ -4,6 +4,10 @@ All notable changes to this repository are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- fix: the `webform_geonames` city autocomplete now uses geonames' `name_startsWith` prefix search instead of the full-text `q` search, so a short prefix (e.g. `Cop`) returns matches (Copenhagen) instead of requiring most of the name to be typed.
+
 ## [1.4.0] – Restore the city autocomplete and harden queries
 
 ### Fixed
