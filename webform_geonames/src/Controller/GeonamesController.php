@@ -49,10 +49,8 @@ class GeonamesController {
     // (web-services.html); free, but has intermittently demanded premium
     // (forum 39842) — the re-check trigger if autocomplete empties.
     // http_build_query encodes each value, so $query cannot break out.
-    // name_startsWith, not q: q is a full-text search, so a short prefix like
-    // "Cop" misses Copenhagen (geonames returns 0) and the user has to type most
-    // of the name. name_startsWith is geonames' documented prefix-autocomplete
-    // parameter. fuzzy is q-only, so it is dropped.
+    // name_startsWith (geonames' prefix-autocomplete parameter), not full-text
+    // q= — with q a short prefix like "Cop" missed Copenhagen.
     $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'name_startsWith' => $query,
       'maxRows' => 200,
