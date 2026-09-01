@@ -78,8 +78,9 @@ class GeonamesController {
       $cities = [];
       if (!empty($data['geonames'])) {
         foreach ($data['geonames'] as $city) {
-          // Store the normalized English city name: toponymName is canonical,
-          // whereas `name` under name_startsWith echoes the typed variant.
+          // Store toponymName — geonames' single main name for the place (the
+          // common English exonym where one exists: Brussels, Munich; else the
+          // local name). `name` under name_startsWith echoes the typed variant.
           $name = $city['toponymName'] ?? $city['name'];
           $cities[] = [
             'value' => $name,
