@@ -79,9 +79,13 @@ class GeonamesController {
       $cities = [];
       if (!empty($data['geonames'])) {
         foreach ($data['geonames'] as $city) {
+          // toponymName (canonical), not name: under name_startsWith `name` echoes
+          // the matched variant, so typing "Bruxel" would store "Bruxel" not
+          // "Brussels".
+          $name = $city['toponymName'] ?? $city['name'];
           $cities[] = [
-            'value' => $city['name'],
-            'label' => $city['name'] . ', ' . $city['adminName1'] . ', ' . $city['countryName'],
+            'value' => $name,
+            'label' => $name . ', ' . $city['adminName1'] . ', ' . $city['countryName'],
           ];
         }
       }
