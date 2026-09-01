@@ -49,8 +49,7 @@ class GeonamesController {
     // (web-services.html); free, but has intermittently demanded premium
     // (forum 39842) — the re-check trigger if autocomplete empties.
     // http_build_query encodes each value, so $query cannot break out.
-    // name_startsWith (geonames' prefix-autocomplete parameter), not full-text
-    // q= — with q a short prefix like "Cop" missed Copenhagen.
+    // name_startsWith is geonames' prefix-autocomplete parameter.
     $url = 'https://secure.geonames.org/searchJSON?' . http_build_query([
       'name_startsWith' => $query,
       'maxRows' => 200,
@@ -79,9 +78,8 @@ class GeonamesController {
       $cities = [];
       if (!empty($data['geonames'])) {
         foreach ($data['geonames'] as $city) {
-          // toponymName (canonical), not name: under name_startsWith `name` echoes
-          // the matched variant, so typing "Bruxel" would store "Bruxel" not
-          // "Brussels".
+          // Store the normalized English city name: toponymName is canonical,
+          // whereas `name` under name_startsWith echoes the typed variant.
           $name = $city['toponymName'] ?? $city['name'];
           $cities[] = [
             'value' => $name,
