@@ -9,7 +9,7 @@ All notable changes to this repository are documented here.
 ### Fixed
 
 - fix: the `webform_geonames` city autocomplete now uses geonames' `name_startsWith` prefix search instead of the full-text `q` search, so a short prefix (e.g. `Cop`) returns matches (Copenhagen) instead of requiring most of the name to be typed.
-- fix: the `webform_geonames` autocomplete now stores geonames' canonical `toponymName` (e.g. `Brussels`) rather than the matched name variant `name_startsWith` returns (e.g. `Bruxel`), so a selected city is saved under its normalized name.
+- fix: the `webform_geonames` autocomplete now stores geonames' canonical `toponymName` (e.g. `Brussels`) rather than the matched name variant a `name_startsWith` search returns (e.g. `Bruxel`), so a selected city is saved under its normalized name.
 
 ## [1.4.0] – Restore the city autocomplete and harden queries
 
