@@ -4,6 +4,10 @@ All notable changes to this repository are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- fix: `organization_validation` now reads its email templates from the module's own directory instead of the fixed `modules/custom/organization_validation` path, so ownership requests, approvals and acceptance notifications are no longer sent with an empty subject and body when the module is installed elsewhere, e.g. with composer under `modules/custom/registry-drupal-modules/` (#71).
+
 ## [1.4.1] – Prefix-based city autocomplete
 
 ### Fixed

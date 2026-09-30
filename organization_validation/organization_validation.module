@@ -346,7 +346,8 @@ function organization_validation_load_email_templates() {
     static $emails = NULL;
 
     if ($emails === NULL) {
-        $file_path = DRUPAL_ROOT . '/modules/custom/organization_validation/organization_validation.emails.yml';
+        $module_path = \Drupal::service('extension.list.module')->getPath('organization_validation');
+        $file_path = DRUPAL_ROOT . '/' . $module_path . '/organization_validation.emails.yml';
 
         if (file_exists($file_path)) {
             $emails = Yaml::parseFile($file_path);
